@@ -18,3 +18,4 @@ plotly
 pandas
 dj-database-url
 gunicorn
+psycopg2
