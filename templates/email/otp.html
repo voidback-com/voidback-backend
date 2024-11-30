@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voidback OTP Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+        }
+        .content {
+            color: #333;
+            font-size: 16px;
+        }
+        .otp-code {
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://static.voidback.com/static/logo.png" alt="Company Logo" class="logo">
+        </div>
+        <div class="content">
+        <p>Dear {{full_name}},</p>
+        <p>Your OTP code is <span class="otp-code">{{otp}}</span>.</p>
+            <p>Please use this code to complete your verification process.</p>
+        </div>
+        <div class="footer">
+            <p>Thank you for using Voidback!</p>
+        </div>
+    </div>
+</body>
+</html>
