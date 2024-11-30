@@ -25,8 +25,6 @@ class Account(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
     isVerified = models.BooleanField(default=False, null=True, blank=True)
     rank = models.BigIntegerField(default=0, blank=True)
-    is_banned = models.BooleanField(default=False, blank=True)
-    ban_exp = models.DateTimeField(blank=True, null=True) # ban expiration
 
 
     USERNAME_FIELD = "email"
