@@ -10,7 +10,6 @@ pillow
 django-mailjet
 django-cors-headers
 django-resized
-transformers[torch]
 channels[daphne]
 django-unfold
 python-decouple
