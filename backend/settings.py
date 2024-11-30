@@ -35,7 +35,8 @@ SECRET_KEY = env_config("SECRET_KEY", cast=str, default="")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_config("DEBUG", cast=bool, default=False)
 
-ALLOWED_HOSTS = env_config("ALLOWED_HOSTS", cast=str, default=" ").split()
+
+
 
 
 # Application definition
@@ -228,6 +229,9 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = "*"
 
 AUTH_USER_MODEL = "voidbackApi.Account"
+
+
+ALLOWED_HOSTS = env_config("ALLOWED_HOSTS", cast=str, default=" ").split()
 
 
 DJANGORESIZED_DEFAULT_SIZE = [1920, 1080]
