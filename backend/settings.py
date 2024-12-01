@@ -77,7 +77,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=8760), # a refresh token is valid for one year
     "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "BLACKLIST_AFTER_ROTATION": False, # only blacklist when logged out
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
