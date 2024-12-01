@@ -43,7 +43,7 @@ class PlatformMessageImpression(models.Model):
 
 
     def __str__(self):
-        return self.message.title
+        return str(self.pk)
 
 
 
