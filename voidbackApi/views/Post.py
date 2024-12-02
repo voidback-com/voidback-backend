@@ -122,7 +122,7 @@ def topPosts(exclude: list, username=""):
     try:
 
         # most recent and highest ranking
-        top10 = Post.objects.all().filter(parent_post=None).order_by("-created_at").order_by("-updated_at").order_by('-rank').exclude(pk__in=exclude).exclude(author=username).distinct()[:10]
+        top10 = Post.objects.all().filter(parent_post=None).order_by("-created_at").order_by("-updated_at").order_by('-rank').exclude(pk__in=exclude).exclude(author__username=username).distinct()[0:10]
 
         serializer = PostSerializer(top10, many=True)
 
@@ -244,6 +244,7 @@ def forYou(request: Request):
 
         exclude = request.data.get("exclude") # a list of already seen posts to be excluded from the query result
 
+
         if not request.user.username:
             return topPosts(exclude)
 
@@ -256,14 +257,14 @@ def forYou(request: Request):
                     Q(symbols__in=fy.symbols) |
                     Q(author__in=fy.accounts),
                     parent_post=None
-                ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(author=request.user.username).distinct()[:10]
+                ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(author=request.user.username).distinct()[0:10]
 
                 serializer = PostSerializer(posts, many=True)
 
                 if len(serializer.data):
                     return Response(data=serializer.data, status=200)
                 else:
-                    return topPosts(exclude)
+                    return topPosts(exclude, username=request.user.username)
 
             else:
                 data = {
