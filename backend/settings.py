@@ -224,7 +224,7 @@ STATIC_URL = "/static/"
 
 
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = env_config("ALLOWED_ORIGINS", cast=str, default=" ").split() 
 CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOW_HEADERS = "*"
 
