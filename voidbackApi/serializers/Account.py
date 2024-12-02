@@ -49,9 +49,18 @@ class AccountSerializer(ModelSerializer):
 
 
 
+class PublicAccountSerializer(ModelSerializer):
+
+    class Meta:
+        model = Account
+        fields = ["full_name", "username", "avatar", "bio", "site_link", "isVerified"]
+
+
+
+
 class FollowSerializer(ModelSerializer):
-    follower = AccountSerializer(read_only=True)
-    following = AccountSerializer(read_only=True)
+    follower = PublicAccountSerializer(read_only=True)
+    following = PublicAccountSerializer(read_only=True)
 
     class Meta:
         model = Follow

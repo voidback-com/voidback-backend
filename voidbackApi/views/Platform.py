@@ -15,6 +15,10 @@ def getPlatformMessage(request: Request):
 
         instance = PlatformMessage.objects.all().last()
 
+        if not instance:
+            return Response(status=204)
+
+
         last_imp = PlatformMessageImpression.objects.all().filter(account=request.user.id).last()
 
         if last_imp and last_imp.message==instance:

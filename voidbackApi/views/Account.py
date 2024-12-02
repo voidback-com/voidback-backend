@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
 from ..pagination.defaultPagination import DefaultSetPagination
-from ..serializers.Account import AccountSerializer, FollowSerializer
+from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer
 from ..models.Account import Account, OneTimePassword, Follow
 import json
 
@@ -192,7 +192,7 @@ def searchAccounts(request: Request):
         else:
             return Response(data=[], status=200)
 
-        serializer = AccountSerializer(topResults, many=True)
+        serializer = PublicAccountSerializer(topResults, many=True)
 
         return Response(data=serializer.data, status=200)
         
@@ -367,7 +367,7 @@ def getAccountByUsername(request: Request, username: str):
         user_instance = Account.objects.all().filter(username=username).first()
 
         if user_instance:
-            s = AccountSerializer(user_instance)
+            s = PublicAccountSerializer(user_instance)
             return Response(data=s.data, status=200)
 
         return Response(data={"error": "Account not found."}, status=404)
@@ -420,7 +420,7 @@ def getAccountMutuals(request: Request, username: str):
 
 
 
-            serialized = AccountSerializer(usernames, many=True)
+            serialized = PublicAccountSerializer(usernames, many=True)
 
             return Response(data=serialized.data, status=200)
 
@@ -458,7 +458,7 @@ def getAccountRecommendations(request: Request):
                         recommended.append(last_followed.following)
 
 
-            serializer = AccountSerializer(recommended, many=True)
+            serializer = PublicAccountSerializer(recommended, many=True)
 
             return Response(data=serializer.data, status=200)
 
@@ -478,7 +478,7 @@ def getAccountRecommendations(request: Request):
                         recommended.append(i)
 
 
-            serializer = AccountSerializer(recommended, many=True)
+            serializer = PublicAccountSerializer(recommended, many=True)
 
             return Response(data=serializer.data, status=200)
 

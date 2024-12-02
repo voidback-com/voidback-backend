@@ -1,5 +1,5 @@
 from rest_framework.serializers import BooleanField, ImageField, IntegerField, ListField, ModelSerializer, ReturnDict, SerializerMethodField
-from .Account import AccountSerializer, Account
+from .Account import PublicAccountSerializer, Account
 from ..models import (
     Hashtag,
     Symbol,
@@ -49,11 +49,11 @@ class PostSerializer(ModelSerializer):
 
     hashtags = HashtagSerializer(many=True, read_only=True)
     symbols = SymbolSerializer(many=True, read_only=True)
-    mentions = AccountSerializer(many=True, read_only=True)
+    mentions = PublicAccountSerializer(many=True, read_only=True)
 
     image = PostImageSerializer(read_only=True)
 
-    author = AccountSerializer(read_only=True)
+    author = PublicAccountSerializer(read_only=True)
 
     parent_post = SerializerMethodField(read_only=True)
 
