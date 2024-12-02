@@ -222,11 +222,12 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_URL = "/static/"
 
 
-CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOW_CREDENTIALS = True
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOW_HEADERS = "*"
+
 
 AUTH_USER_MODEL = "voidbackApi.Account"
 
