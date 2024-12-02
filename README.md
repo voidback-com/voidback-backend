@@ -2,9 +2,6 @@
 
 > *The django api that powers voidback.com*
 
-[![PyPI Version][pypi-v-image]][pypi-v-link]
-[![Build Status][GHAction-image]][GHAction-link]
-[![Coverage Status][codecov-image]][codecov-link]
 
 
 ## Run locally
