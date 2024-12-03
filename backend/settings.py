@@ -174,7 +174,10 @@ DATABASES = {
 }
 
 
-DATABASES['default'] = dj_database_url.parse(env_config("DATABASE_URL", cast=str, default=""))
+# only add the postgresql url if its defined in the env 
+if env_config("DATABASE_URL", cast=str, default="") != "":
+    DATABASES['default'] = dj_database_url.parse(env_config("DATABASE_URL", cast=str, default=""))
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
