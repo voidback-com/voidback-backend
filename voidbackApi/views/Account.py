@@ -30,6 +30,7 @@ class SignupView(CreateAPIView):
 class AccountView(APIView):
     permission_classes = [IsAuthenticated]
 
+
     def get(self, request):
         try:
             serializer = AccountSerializer(request.user)
@@ -103,7 +104,10 @@ def send_otp(request: Request):
 
         time_now = timezone.now()
 
-        if last_otp and last_otp.expires_at > time_now:
+        if last_otp.created_at+timezone.timedelta(seconds=30) > time_now:
+            return Response(data={"error": "Can't request a new otp until the previous one expires.  (otp lifetime is 10 minutes)"}, status=400)
+
+        if last_otp and last_otp.expires_at >= time_now:
             return Response(data={"error": "Can't request a new otp until the previous one expires.  (otp lifetime is 10 minutes)"}, status=400)
 
 
@@ -147,6 +151,9 @@ def verify_otp(request: Request):
         if instance and instance.expires_at > time_now:
             if instance.otp == otp:
                 instance.verified = True
+                if not instance.account.email_verified:
+                    instance.account.email_verified = True
+                    instance.account.save()
                 instance.save()
 
                 return Response(data={"message": "Successful OTP verification."}, status=200)
@@ -158,6 +165,8 @@ def verify_otp(request: Request):
 
     except Exception:
         return Response(data={"error": "Error verifying otp."}, status=400)
+
+
 
 
 
@@ -520,7 +529,7 @@ def resetPassword(request):
 
         return Response({"error": "Error the otp is either expired or invalid."}, status=400)
 
-    except KeyError:
+    except Exception:
         return Response({"error": "Error the otp is either expired or invalid."}, status=400)
 
 

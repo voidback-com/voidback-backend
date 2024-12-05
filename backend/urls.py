@@ -26,3 +26,4 @@ urlpatterns = [
     path("gfetch/", include("greedyFetch.urls")),
     path("api/analytics/", include("Analytics.urls"))
 ]
+

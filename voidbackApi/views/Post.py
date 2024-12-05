@@ -23,12 +23,17 @@ class PostView(APIView):
 
     def post(self, request: Request):
         try:
+
+            if not request.user.email_verified:
+                return Response({"error": "You have to verify your email first, before you can post!"}, status=400)
+
             data = json.loads(request.data.get("post", None))
 
             data['author'] = request.user
 
 
             data['image'] = request.FILES.get("image", None)
+
 
             if data['parent_post']:
                 inst = Post.objects.all().filter(pk=data['parent_post']).first()

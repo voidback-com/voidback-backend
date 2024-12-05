@@ -24,6 +24,7 @@ class Account(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     isVerified = models.BooleanField(default=False, null=True, blank=True)
+    email_verified = models.BooleanField(default=False, blank=True)
     rank = models.BigIntegerField(default=0, blank=True)
 
 
