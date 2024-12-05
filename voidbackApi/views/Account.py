@@ -104,8 +104,6 @@ def send_otp(request: Request):
 
         time_now = timezone.now()
 
-        if last_otp.created_at+timezone.timedelta(seconds=30) > time_now:
-            return Response(data={"error": "Can't request a new otp until the previous one expires.  (otp lifetime is 10 minutes)"}, status=400)
 
         if last_otp and last_otp.expires_at >= time_now:
             return Response(data={"error": "Can't request a new otp until the previous one expires.  (otp lifetime is 10 minutes)"}, status=400)
