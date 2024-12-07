@@ -127,7 +127,7 @@ class ForYou(models.Model):
     symbols = models.JSONField()
     hashtags = models.JSONField()
     accounts = models.JSONField()
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, to_field="username")
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, to_field="username", unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
