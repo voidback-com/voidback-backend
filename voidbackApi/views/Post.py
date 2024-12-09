@@ -58,6 +58,9 @@ class PostView(APIView):
                     i.save()
 
 
+            mentions = data['mentions']
+
+
             serializer = PostSerializer(data=data)
 
             if serializer.is_valid():
@@ -69,6 +72,16 @@ class PostView(APIView):
 
                 dat = serializer.data
                 dat.update({"id": r.id})
+
+
+                for m in mentions:
+                    if m['username']==request.user.username:
+                        continue
+                    macc = Account.objects.all().filter(username=m['username']).first()
+
+                    newNotification(macc, request.user.full_name, f"/view/post/{r.id}", fromAvatar=request.user.avatar, body=f"@{request.user.username} mentioned you.", avatarVerified=request.user.isVerified, icon="mention")
+
+
                 return Response(data=dat, status=200)
 
             else:
