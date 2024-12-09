@@ -17,7 +17,11 @@ from .models import (
     ResearchPaperImpression,
     Notification,
     PlatformMessage,
-    PlatformMessageImpression
+    PlatformMessageImpression,
+    DataHubQuery,
+    DataHubAccount,
+    DataHubFeedbackPoll,
+    DataHubPositionPoll
 )
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
@@ -124,6 +128,28 @@ class PlatformMessageImpressionAdmin(ModelAdmin):
     search_fields = ['message__title', 'account__username']
 
 
+
+@admin.register(DataHubAccount)
+class DataHubAccountAdmin(ModelAdmin):
+    search_fields = ['account__username']
+
+
+
+@admin.register(DataHubQuery)
+class DataHubQueryAdmin(ModelAdmin):
+    search_fields = ['account__account__username']
+
+
+
+
+@admin.register(DataHubPositionPoll)
+class DataHubPositionPollAdmin(ModelAdmin):
+    search_fields = ['account__account__username']
+
+
+@admin.register(DataHubFeedbackPoll)
+class DataHubFeedbackPollAdmin(ModelAdmin):
+    search_fields = ['account__account__username']
 
 
 

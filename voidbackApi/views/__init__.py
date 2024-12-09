@@ -6,3 +6,4 @@ from .Research import *
 from .Notifications import *
 from .Platform import *
 from .ReportManagement import *
+from .dataHub import *

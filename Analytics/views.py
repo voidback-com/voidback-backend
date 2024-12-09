@@ -21,7 +21,6 @@ def logEvent(request: Request):
         serializer = EventSerializer(data=event)
 
 
-
         if serializer.is_valid():
             serializer.create(event)
 

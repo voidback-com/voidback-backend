@@ -203,14 +203,14 @@ class AuthorPostsView(ListAPIView):
             username = self.request.query_params.get("username")
             post_type = self.request.query_params.get("type", None)
 
-            instance = Post.objects.all().filter(author=username).order_by("-created_at").order_by("-rank") # hybrid of orphan and child posts
+            instance = Post.objects.all().filter(author=username).order_by("-created_at") # hybrid of orphan and child posts
 
             if post_type == "orphan": # original posts without a parent post
-                instance = Post.objects.all().filter(author=username, parent_post=None).order_by("-created_at").order_by("-rank")
+                instance = Post.objects.all().filter(author=username, parent_post=None).order_by("-created_at")
 
             
             elif post_type == "child": # reply posts with a parent post
-                instance = Post.objects.all().filter(author=username).exclude(parent_post=None).order_by("-created_at").order_by("-rank")
+                instance = Post.objects.all().filter(author=username).exclude(parent_post=None).order_by("-created_at")
 
             return instance
         except Exception:
@@ -225,7 +225,7 @@ def getAuthorPosts(request: Request):
     try:
         username = request.data.get("username")
 
-        instance = Post.objects.all().filter(author=username).order_by("-created_at").order_by("-rank")
+        instance = Post.objects.all().filter(author=username).order_by("-created_at")
 
         if instance:
 

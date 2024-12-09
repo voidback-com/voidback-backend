@@ -155,6 +155,7 @@ class PostImpressionSerializer(ModelSerializer):
 
 
 class PostMetadataSerializer(ModelSerializer):
+    post = PostSerializer(read_only=True)
 
     class Meta:
         model = PostMetadata
