@@ -18,3 +18,7 @@ plotly
 pandas
 dj-database-url
 psycopg2-binary
+pyyaml
+ua-parser
+user-agents
+geoip2

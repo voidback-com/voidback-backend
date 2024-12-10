@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Event
+from .models import Device, Event
 
 
 
@@ -12,3 +12,12 @@ class EventSerializer(ModelSerializer):
 
         fields = "__all__"
 
+
+
+class DeviceSerializer(ModelSerializer):
+
+    class Meta:
+
+        model = Device
+
+        fields = "__all__"

@@ -18,8 +18,15 @@ from channels.security.websocket import AllowedHostsOriginValidator
 os.environ["DJANGO_SETTINGS_MODULE"] = "backend.settings"
 django_asgi_app = get_asgi_application()
 
-from voidbackApi.routing import websocket_urlpatterns
 
+from voidbackApi.routing import websocket_urlpatterns
+from Analytics.routing import websocket_analytics_urlpatterns
+
+
+
+patterns = websocket_urlpatterns
+
+patterns+=websocket_analytics_urlpatterns
 
 
 application = ProtocolTypeRouter({
@@ -27,7 +34,7 @@ application = ProtocolTypeRouter({
     "https": django_asgi_app,
     # (we can add other protocols under http)
     "websocket": AllowedHostsOriginValidator(
-        AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+        AuthMiddlewareStack(URLRouter(patterns))
     )
 })
 

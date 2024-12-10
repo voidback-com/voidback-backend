@@ -20,11 +20,14 @@ class NotificationsCountConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
 
-        tok = data['token']
+
+
 
         try:
+            data = json.loads(text_data)
+            tok = data['token']
+
             tok = jwt.decode(tok, settings.SECRET_KEY, "HS256")
 
             user_id = tok['user_id']

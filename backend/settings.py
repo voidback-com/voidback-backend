@@ -56,9 +56,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     "greedyFetch",
     "voidbackApi",
-    "Analytics"
-]
+    "django_user_agents",
+    "Analytics",
 
+]
 
 
 REST_FRAMEWORK = {
@@ -134,6 +135,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+        'django_user_agents.middleware.UserAgentMiddleware',
 
 ]
 
@@ -248,7 +250,7 @@ DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'PNG': ".png"}
 DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 
 
-
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
 
 UNFOLD = unfold.UNFOLD
 
