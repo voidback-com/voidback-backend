@@ -22,3 +22,4 @@ pyyaml
 ua-parser
 user-agents
 geoip2
+django-user-agents
