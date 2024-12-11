@@ -1,6 +1,6 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import Event, Device
+from .models import Event, Device, UsersActivityHistory
 
 
 @admin.register(Event)
@@ -13,6 +13,14 @@ class EventAdmin(ModelAdmin):
 @admin.register(Device)
 class DeviceAdmin(ModelAdmin):
     search_fields = ["ip"]
+    sortable_by = ['id']
+
+
+
+
+@admin.register(UsersActivityHistory)
+class UsersActivityHistoryAdmin(ModelAdmin):
+    search_fields = ["hash"]
     sortable_by = ['id']
 
 

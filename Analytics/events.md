@@ -13,6 +13,7 @@
 - view-account-posts
 - view-account-liked-posts
 - new-post
+- submit-post-report
 
 
 # Research related events
