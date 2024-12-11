@@ -43,7 +43,7 @@ class Event(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     account = models.TextField(default="anonymous", blank=True, null=True) # account username
-    device = models.ForeignKey(Device, on_delete=models.SET_NULL, null=True, to_field="id")
+    device = models.ForeignKey(Device, on_delete=models.SET_NULL, null=True, blank=True)
 
 
     class Meta:

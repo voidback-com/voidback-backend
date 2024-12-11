@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.utils import timezone
@@ -80,7 +80,7 @@ def getDevice(request, account="Anonymous"):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny, IsAuthenticated])
 def logEvent(request: Request):
     try:
         
@@ -195,7 +195,7 @@ def logEvent(request: Request):
 
         return Response(status=400)
 
-    except Exception:
+    except KeyboardInterrupt:
         return Response(status=400)
 
 

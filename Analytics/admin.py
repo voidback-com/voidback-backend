@@ -5,7 +5,7 @@ from .models import Event, Device
 
 @admin.register(Event)
 class EventAdmin(ModelAdmin):
-    search_fields = ['id', "object_type", "event_tone"]
+    search_fields = ['id', "object_type"]
     sortable_by = ['id']
 
 
