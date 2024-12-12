@@ -448,7 +448,7 @@ class PostMetadataView(APIView):
             else:
                 return Response(data={"error": "Error processing the metadata!"}, status=400)
                 
-        except KeyboardInterrupt:
+        except Exception:
             return Response(status=400)
 
 
@@ -531,22 +531,27 @@ def getTrendingHashtags(request):
                 event_type="view-hashtag-posts",
                 data={"hashtag": s.hashtag},
                 created_at__range=[start_date, end_date]
-            ).values("device").order_by("-created_at")[0:10] # top 10 last countries that viewed this hashtag
+            ).values("device__country", "device__city").order_by("-created_at")[0:10] # top 10 last countries that viewed this hashtag
+
             
             events = list(events)
 
-            most_common = Counter([inst.country for inst in events]).most_common(1)
-
-            if len(most_common):
-                most_common = most_common[0][0]
-            else:
-                most_common = Counter([inst.city for inst in events]).most_common(1)
+            if len(events):
+                most_common = Counter([inst['device__country'] for inst in events]).most_common(1)
 
                 if len(most_common):
                     most_common = most_common[0][0]
-
                 else:
-                    most_common = ""
+                    most_common = Counter([inst['device__city'] for inst in events]).most_common(1)
+
+                    if len(most_common):
+                        most_common = most_common[0][0]
+
+                    else:
+                        most_common = ""
+            else:
+                most_common = ""
+
 
             s = HashtagSerializer(s)
 
@@ -616,22 +621,26 @@ def getTrendingSymbols(request):
                 event_type="view-symbol-posts",
                 data={"symbol": s.symbol},
                 created_at__range=[start_date, end_date]
-            ).values("device").order_by("-created_at")[0:10] # top 10 last countries that viewed this symbol's
+            ).values("device__country", "device__city").order_by("-created_at")[0:10] # top 10 last countries that viewed this symbol's
             
             events = list(events)
 
-            most_common = Counter([inst.country for inst in events]).most_common(1)
 
-            if len(most_common):
-                most_common = most_common[0][0]
-            else:
-                most_common = Counter([inst.city for inst in events]).most_common(1)
+            if len(events):
+                most_common = Counter([inst['device__country'] for inst in events]).most_common(1)
 
                 if len(most_common):
                     most_common = most_common[0][0]
-
                 else:
-                    most_common = ""
+                    most_common = Counter([inst['device__city'] for inst in events]).most_common(1)
+
+                    if len(most_common):
+                        most_common = most_common[0][0]
+
+                    else:
+                        most_common = ""
+            else:
+                most_common = ""
 
             s = SymbolSerializer(s)
 
