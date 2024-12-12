@@ -1,17 +1,18 @@
+from collections import Counter
 from django.db.models import Q, Count
-from django.utils.timezone import datetime, make_aware, timedelta
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from Analytics.models import Event
 from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Post import *
 from ..models.Post import *
 from ..models.Notifications import newNotification
 import json
+from django.utils import timezone
 
 
 
@@ -516,10 +517,50 @@ def getTrendingHashtags(request):
         # most posts and most recent (descending)
         top5 = Hashtag.objects.all().order_by("-created_at").order_by("-rank")[:5]
 
-    
-        serializer = HashtagSerializer(top5, many=True)
 
-        return Response(data=serializer.data, status=200)
+        today = timezone.now()
+
+        start_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0, second=0)
+
+        end_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=23, minute=59, second=59)
+
+        data = list()
+
+        for s in top5:
+            events = Event.objects.all().filter(
+                event_type="view-hashtag-posts",
+                data={"hashtag": s.hashtag},
+                created_at__range=[start_date, end_date]
+            ).values("device").order_by("-created_at")[0:10] # top 10 last countries that viewed this hashtag
+            
+            events = list(events)
+
+            most_common = Counter([inst.country for inst in events]).most_common(1)
+
+            if len(most_common):
+                most_common = most_common[0][0]
+            else:
+                most_common = Counter([inst.city for inst in events]).most_common(1)
+
+                if len(most_common):
+                    most_common = most_common[0][0]
+
+                else:
+                    most_common = ""
+
+            s = HashtagSerializer(s)
+
+            dat = dict()
+
+            dat.update(s.data)
+
+            dat.update({"location":  most_common})
+
+
+            data.append(dat)
+
+
+        return Response(data=data, status=200)
 
     except Exception:
         return Response(data={"error": "Error retrieving trending hashtags!"}, status=400)
@@ -561,9 +602,48 @@ def getTrendingSymbols(request):
         # most posts and most recent (descending)
         top5 = Symbol.objects.all().order_by("-created_at").order_by("-rank")[:5]
 
-        serializer = SymbolSerializer(top5, many=True)
 
-        return Response(data=serializer.data, status=200)
+        today = timezone.now()
+
+        start_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0, second=0)
+
+        end_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=23, minute=59, second=59)
+
+        data = list()
+
+        for s in top5:
+            events = Event.objects.all().filter(
+                event_type="view-symbol-posts",
+                data={"symbol": s.symbol},
+                created_at__range=[start_date, end_date]
+            ).values("device").order_by("-created_at")[0:10] # top 10 last countries that viewed this symbol's
+            
+            events = list(events)
+
+            most_common = Counter([inst.country for inst in events]).most_common(1)
+
+            if len(most_common):
+                most_common = most_common[0][0]
+            else:
+                most_common = Counter([inst.city for inst in events]).most_common(1)
+
+                if len(most_common):
+                    most_common = most_common[0][0]
+
+                else:
+                    most_common = ""
+
+            s = SymbolSerializer(s)
+
+            dat = dict()
+
+            dat.update(s.data)
+
+            dat.update({"location":  most_common})
+
+            data.append(dat)
+
+        return Response(data=data, status=200)
 
     except Exception:
         return Response(data={"error": "Error retrieving trending symbols!"}, status=400)
