@@ -10,11 +10,22 @@ from .models import Device
 import urllib.request
 
 
+def getip(request):
+    try:
+        ip = request.META.get('HTTP_X_FORWARDED_FOR')
+        if ip:
+            ip = ip.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
+    except Exception:
+        return None
+
 
 def getDevice(request, account="Anonymous"):
     try:
         g = GeoIP2()
-        ip = request.META.get("REMOTE_ADDR", None)
+        ip = getip(request)
 
 
         local =  ['127.0.0.1', 'localhost', '0.0.0.0']
