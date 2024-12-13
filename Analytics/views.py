@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.utils import timezone
 from django.contrib.gis.geoip2 import GeoIP2
 from voidbackApi.models.Post import Hashtag, Symbol
-from .serializers import EventSerializer, Event
+from .serializers import EventSerializer
 from .models import Device
 import urllib.request
 
@@ -91,11 +91,12 @@ def logEvent(request: Request):
 
         event['account'] = acc
 
+        event['device'] = getDevice(request, account=acc)
+
         serializer = EventSerializer(data=event)
 
 
         if serializer.is_valid():
-            event['device'] = getDevice(request, account=acc)
             serializer.create(event)
 
 
@@ -105,42 +106,15 @@ def logEvent(request: Request):
                 if inst:
                     now = timezone.now()
 
-                    if inst.created_at+timezone.timedelta(days=30) < now and inst.updated_at+timezone.timedelta(hours=1) < now:
-                        # if the Hashtag was created longer than 30 days ago and updated longer than an hour ago then reset it's rank (only the yound and brave survive)
+
+                    if inst.updated_at+timezone.timedelta(hours=24) <= now:
+                        # if the hashtag was last updated day or more ago then reset it's rank
                         inst.rank=0
                         inst.save()
+
                     else:
-                        if inst.updated_at+timezone.timedelta(minutes=10) > now:
-                            # if the Hashtag was updated in the last 10 minutes then increment the rank plus a 100
-                            inst.rank+=1
-                            # hot af rn
-                            inst.save() 
-
-                        elif inst.updated_at+timezone.timedelta(hours=1) > now:
-                            # if the Hashtag was updated in the last hour then increment the rank
-                            inst.rank+=1
-                            # picking up steam
-                            inst.save()
-
-
-                        elif inst.updated_at+timezone.timedelta(hours=4) < now:
-                            # if this hashtag's rank was updated in the last 4 hours or more
-                            # then decrement the rank (because it's falling off)
-                            inst.rank-=1
-                            # loosing steam
-                            inst.save()
-
-                        elif inst.updated_at+timezone.timedelta(days=1) < now:
-                            # if the hashtag was last updated 1 day ago then reset it's rank
-                            inst.rank=0
-                            inst.save()
-
-
-                        elif inst.updated_at+timezone.timedelta(days=2) <= now:
-
-                            # it's dead
-                            inst.rank=0
-                            inst.save()
+                        inst.rank+=1
+                        inst.save()
 
 
 
@@ -150,47 +124,17 @@ def logEvent(request: Request):
 
                     now = timezone.now()
 
-                    if inst.created_at+timezone.timedelta(days=30) < now and inst.updated_at+timezone.timedelta(hours=1) < now:
-                        # if the symbol was created longer than 30 days ago and updated longer than an hour ago then reset it's rank (only the yound and brave survive)
+                    if inst.updated_at+timezone.timedelta(hours=24) <= now:
+                        # if the hashtag was last updated day or more ago then reset it's rank
                         inst.rank=0
                         inst.save()
+
                     else:
+                        inst.rank+=1
+                        inst.save()
 
-                        if inst.updated_at+timezone.timedelta(minutes=10) > now:
-                            # if the symbol was updated in the last 10 minutes then increment the rank plus a 100
-                            inst.rank+=1
-                            # hot af rn
-                            inst.save() 
-
-                        elif inst.updated_at+timezone.timedelta(hours=1) > now:
-                            # if the Symbol was updated in the last hour then increment the rank
-                            inst.rank+=1
-                            # picking up steam
-                            inst.save()
-
-
-                        elif inst.updated_at+timezone.timedelta(hours=4) < now:
-                            # if this symbol's rank was updated in the last 4 hours or more
-                            # then decrement the rank (because it's falling off)
-                            inst.rank-=1
-                            # loosing steam
-                            inst.save()
-
-
-                        elif inst.updated_at+timezone.timedelta(days=1) < now:
-                            # if the hashtag was last updated 1 day ago then reset it's rank
-                            inst.rank=0
-                            inst.save()
-
-
-                        elif inst.updated_at+timezone.timedelta(days=2) <= now:
-
-                            # it's dead
-                            inst.rank=0
-                            inst.save()
 
             return Response(status=200)
-
 
 
         return Response(status=400)
