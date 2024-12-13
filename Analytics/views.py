@@ -80,7 +80,7 @@ def getDevice(request, account="Anonymous"):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny, IsAuthenticated])
+@permission_classes([AllowAny])
 def logEvent(request: Request):
     try:
         
@@ -195,7 +195,7 @@ def logEvent(request: Request):
 
         return Response(status=400)
 
-    except KeyboardInterrupt:
+    except Exception:
         return Response(status=400)
 
 

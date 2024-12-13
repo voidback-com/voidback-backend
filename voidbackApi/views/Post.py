@@ -517,20 +517,12 @@ def getTrendingHashtags(request):
         # most posts and most recent (descending)
         top5 = Hashtag.objects.all().order_by("-created_at").order_by("-rank")[:5]
 
-
-        today = timezone.now()
-
-        start_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0, second=0)
-
-        end_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=23, minute=59, second=59)
-
         data = list()
 
         for s in top5:
             events = Event.objects.all().filter(
                 event_type="view-hashtag-posts",
-                data={"hashtag": s.hashtag},
-                created_at__range=[start_date, end_date]
+                data={"hashtag": s.hashtag}
             ).values("device__country", "device__city").order_by("-created_at")[0:10] # top 10 last countries that viewed this hashtag
 
             
@@ -608,19 +600,12 @@ def getTrendingSymbols(request):
         top5 = Symbol.objects.all().order_by("-created_at").order_by("-rank")[:5]
 
 
-        today = timezone.now()
-
-        start_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0, second=0)
-
-        end_date = timezone.datetime(year=today.year, month=today.month, day=today.day, hour=23, minute=59, second=59)
-
         data = list()
 
         for s in top5:
             events = Event.objects.all().filter(
                 event_type="view-symbol-posts",
                 data={"symbol": s.symbol},
-                created_at__range=[start_date, end_date]
             ).values("device__country", "device__city").order_by("-created_at")[0:10] # top 10 last countries that viewed this symbol's
             
             events = list(events)
