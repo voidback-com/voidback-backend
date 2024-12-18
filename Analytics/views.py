@@ -33,9 +33,8 @@ def getDevice(request, account="Anonymous"):
         if not ip:
             return None
 
-        if ip in local:
+        if ip in local: # for local dev
             ip = urllib.request.urlopen('https://ident.me').read().decode('utf8')
-
 
 
         instance = Device.objects.all().filter(ip=ip).first()

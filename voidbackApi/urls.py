@@ -113,6 +113,11 @@ from .views import (
     DataHubFeedbackPollView,
     DataHubPollView,
 
+
+
+    # ML Models
+    textNSFW
+
 )
 
 
@@ -234,5 +239,7 @@ urlpatterns = [
     path("data-hub/query", DataHubQueryView.as_view()),
     path("data-hub/poll/feedback", DataHubFeedbackPollView.as_view()),
     path("data-hub/poll/position", DataHubPollView.as_view()),
+
+    path("nsfw/text", textNSFW)
 
 ]
