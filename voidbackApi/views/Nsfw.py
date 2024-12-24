@@ -43,6 +43,7 @@ def imageNSFW(request: Request):
         if img.size > 5e+6:
             return Response(status=400)
 
+        
         img = Image.open(img)
 
         model = pipeline("image-classification", "models/vit-base-nsfw-detector", device="cpu")
