@@ -202,8 +202,6 @@ def searchAccounts(request: Request):
         serializer = PublicAccountSerializer(topResults, many=True)
 
         return Response(data=serializer.data, status=200)
-        
-
 
     except Exception:
         return Response(data=[], status=200)

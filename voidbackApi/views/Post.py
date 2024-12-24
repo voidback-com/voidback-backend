@@ -7,6 +7,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Analytics.models import Event
+from helpers.ml.text import textSentimentAnalysis, textToxicity
 from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Post import *
 from ..models.Post import *
@@ -36,6 +37,7 @@ class PostView(APIView):
             data['image'] = request.FILES.get("image", None)
 
 
+
             if data['parent_post']:
                 inst = Post.objects.all().filter(pk=data['parent_post']).first()
                 data['parent_post'] = inst
@@ -60,6 +62,12 @@ class PostView(APIView):
 
 
             mentions = data['mentions']
+            symbols = data['symbols']
+            hashtags = data['hashtags']
+
+            if "from_mobile" in data:
+                text = data.pop("text")
+                toxicity = data.pop("toxicity")
 
 
             serializer = PostSerializer(data=data)
@@ -67,6 +75,14 @@ class PostView(APIView):
             if serializer.is_valid():
 
                 r = serializer.create(data)
+
+                if "from_mobile" in data:
+                    sentiment = textSentimentAnalysis(text)
+
+                    if sentiment:
+                        meta = PostMetadata(post=r, symbols=symbols, hashtags=hashtags, text=text, text_sentiment=sentiment, text_toxicity=toxicity)
+                        meta.save()
+
 
                 if data['parent_post']:
                     newNotification(data['parent_post'].author, request.user.full_name, f"/view/post/{r.id}", body=f"@{request.user.username} replied to your post!", fromAvatar=request.user.avatar, avatarVerified=request.user.isVerified, icon="message")

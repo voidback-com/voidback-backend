@@ -61,6 +61,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     parent_post = models.ForeignKey("Post", on_delete=models.CASCADE, null=True, blank=True, to_field="id")
+    from_mobile = models.BooleanField(default=False, blank=True, null=True) # rendered differently on the browser when from the mobile editor
     rank = models.BigIntegerField(default=0, blank=True, null=True)
 
 
@@ -108,7 +109,6 @@ class PostMetadata(models.Model):
     partial_sentiment = models.JSONField(null=True)
     text_toxicity = models.JSONField()
     text = models.TextField(max_length=20000) # post text limit is 20k chars
-
 
 
     def __str__(self):
