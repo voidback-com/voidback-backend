@@ -78,7 +78,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=8760), # a refresh token is valid for one year
-    "ROTATE_REFRESH_TOKENS": True,
+    "ROTATE_REFRESH_TOKENS": True, # returns an access & refresh token on every refresh
     "BLACKLIST_AFTER_ROTATION": False, # only blacklist when logged out
     "UPDATE_LAST_LOGIN": False,
 
@@ -230,7 +230,7 @@ STATIC_URL = "/static/"
 
 
 
-CORS_ALLOWED_ORIGINS = env_config("ALLOWED_ORIGINS", cast=str, default=" ").split ()
+CORS_ALLOWED_ORIGINS = env_config("ALLOWED_ORIGINS", cast=str, default=" ").split()
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = "*"
 

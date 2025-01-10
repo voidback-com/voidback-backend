@@ -4,7 +4,7 @@ from .Account import Account
 
 
 class PostImage(models.Model):
-    image = models.ImageField(upload_to="images/", blank=False, null=False, )
+    image = models.ImageField(upload_to="images/", blank=False, null=False)
 
     def __str__(self):
         return str(self.pk)

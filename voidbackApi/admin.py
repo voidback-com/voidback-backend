@@ -21,7 +21,11 @@ from .models import (
     DataHubQuery,
     DataHubAccount,
     DataHubFeedbackPoll,
-    DataHubPositionPoll
+    DataHubPositionPoll,
+    DMMessage,
+    DirectMessageSession,
+    DMVoiceNote,
+    DMImage
 )
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
@@ -151,5 +155,26 @@ class DataHubPositionPollAdmin(ModelAdmin):
 class DataHubFeedbackPollAdmin(ModelAdmin):
     search_fields = ['account__account__username']
 
+
+
+# DMS registered only for development
+@admin.register(DirectMessageSession)
+class DirectMessageSessionAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(DMMessage)
+class DMMessageAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(DMVoiceNote)
+class DMVoiceNote(ModelAdmin):
+    pass
+
+
+@admin.register(DMImage)
+class DMImage(ModelAdmin):
+    pass
 
 

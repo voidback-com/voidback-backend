@@ -17,7 +17,6 @@ from django.urls import resolve
 def gfetch(request: Request):
     try:
 
-
         requests = request.data.get("requests")
 
         responses = dict()
@@ -61,4 +60,5 @@ def gfetch(request: Request):
 
     except Exception:
         return Response(status=400)
+
 

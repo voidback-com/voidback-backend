@@ -279,6 +279,8 @@ def forYou(request: Request):
 
         exclude = request.data.get("exclude") # a list of already seen posts to be excluded from the query result
 
+        print(request.user.username)
+
 
         if not request.user.username:
             return topPosts(exclude)
@@ -294,10 +296,15 @@ def forYou(request: Request):
                     parent_post=None
                 ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(author=request.user.username).distinct()[0:10]
 
-                serializer = PostSerializer(posts, many=True)
 
-                if len(serializer.data):
+                if len(posts) < 10:
+                    return topPosts(exclude, request.user.username)
+
+                serializer = PostSerializer(instance=posts, many=True)
+
+                if posts:
                     return Response(data=serializer.data, status=200)
+
                 else:
                     return topPosts(exclude, username=request.user.username)
 
@@ -315,7 +322,7 @@ def forYou(request: Request):
 
             return topPosts(exclude, username=request.user.username)
 
-    except Exception:
+    except KeyError:
         return Response(data={"error": "Error fetching pots!"}, status=400)
 
 
