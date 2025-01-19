@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
+from tensorflow.python.ops.check_ops import assert_near_v2
 
 from .views import (
     # ACCOUNT
@@ -25,6 +26,7 @@ from .views import (
     searchAccounts,
     getAccountMutuals,
     getAccountRecommendations,
+    getAccountStatus,
 
 
     # POST
@@ -117,7 +119,19 @@ from .views import (
 
     # ML Models
     textNSFW,
-    imageNSFW
+    imageNSFW,
+
+
+    # DMs
+    CreateDMSession,
+    DeleteDMSession,
+    SendDirectMessage,
+    DeleteDirectMessage,
+    getSessions,
+    DirectMessageSessionView,
+    archiveSession,
+    unarchiveSession,
+    getArchivedSessions
 
 )
 
@@ -156,6 +170,7 @@ urlpatterns = [
     path("account/getAccount/<str:username>", getAccountByUsername),
     path("account/getMutuals/<str:username>", getAccountMutuals),
     path("account/recommendations", getAccountRecommendations),
+    path("account/status", getAccountStatus),
 
 
 
@@ -242,6 +257,20 @@ urlpatterns = [
     path("data-hub/poll/position", DataHubPollView.as_view()),
 
     path("nsfw/text", textNSFW),
-    path("nsfw/image", imageNSFW)
+    path("nsfw/image", imageNSFW),
+
+
+    # DMs
+    path("dm/create/session", CreateDMSession.as_view()),
+    path("dm/delete/session", DeleteDMSession.as_view()),
+    path("dm/send/message", SendDirectMessage.as_view()),
+    path("dm/delete/message", DeleteDirectMessage.as_view()),
+    path("dm/get/sessions", getSessions),
+    path("dm/view/session", DirectMessageSessionView.as_view()),
+    path("dm/archive/session", archiveSession),
+    path("dm/unarchive/session", unarchiveSession),
+    path("dm/get/archives", getArchivedSessions),
 
 ]
+
+

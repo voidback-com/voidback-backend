@@ -105,7 +105,7 @@ class PostMetadata(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, to_field="id")
     symbols = models.JSONField()
     hashtags = models.JSONField()
-    text_sentiment = models.CharField(max_length=30)
+    text_sentiment = models.TextField()
     partial_sentiment = models.JSONField(null=True)
     text_toxicity = models.JSONField()
     text = models.TextField(max_length=20000) # post text limit is 20k chars

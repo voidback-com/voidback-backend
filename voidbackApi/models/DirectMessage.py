@@ -13,6 +13,8 @@ class DMImage(models.Model):
 
 class DMVoiceNote(models.Model):
     voiceNote = models.FileField(upload_to=f"voiceNotes/dm/{hashlib.sha256(os.urandom(16)).hexdigest()}/", blank=False, null=False)
+    minutes = models.BigIntegerField(default=0)
+    seconds = models.BigIntegerField(default=0)
 
     def __str__(self):
         return str(self.pk)
@@ -23,6 +25,7 @@ class DirectMessageSession(models.Model):
     # for a session to be established the session initiator must be followed by the reciepient
     initiator = models.ForeignKey(Account, related_name="initiator", on_delete=models.CASCADE)
     friend = models.ForeignKey(Account, related_name="friend", on_delete=models.CASCADE)
+    archived_by = models.ManyToManyField(Account, related_name="archived_by", blank=True) # the accounts this dm session is archived by
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -40,7 +43,6 @@ class DMMessage(models.Model):
     post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True, blank=True) # attached post
     image = models.ForeignKey(DMImage, on_delete=models.CASCADE, blank=True, null=True) # attached image
     voiceNote = models.ForeignKey(DMVoiceNote, on_delete=models.CASCADE, blank=True, null=True)
-    parent = models.ForeignKey("InboxMessage", on_delete=models.DO_NOTHING, null=True, blank=True) # reply message
     sent_at = models.DateTimeField(auto_now_add=True)
     seen = models.BooleanField(default=False, blank=True)
     seen_at = models.DateTimeField(auto_now=True)

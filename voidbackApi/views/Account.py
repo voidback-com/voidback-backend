@@ -14,8 +14,8 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
 from ..pagination.defaultPagination import DefaultSetPagination
-from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer
-from ..models.Account import Account, OneTimePassword, Follow
+from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer, AccountActiveStatusSerializer
+from ..models.Account import Account, AccountActiveStatus, OneTimePassword, Follow
 import json
 
 
@@ -575,4 +575,23 @@ def send_AnonymousOtp(request: Request):
     except Exception:
         return Response(data={"error": "Error sending a One Time Password."}, status=400)
 
+
+
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def getAccountStatus(request):
+    try:
+        acc = request.query_params.get("account")
+        instance = AccountActiveStatus.objects.all().filter(account__username=acc).first()
+
+        if instance:
+            serialized = AccountActiveStatusSerializer(instance)
+            return Response(data=serialized.data, status=200)
+
+        return Response(data={"error": "Error couldn't retrieve the user's active status, none found."}, status=400)
+    except Exception:
+        return Response(data={"error": "Error couldn't retrieve the user's active status."}, status=400)
+        
 

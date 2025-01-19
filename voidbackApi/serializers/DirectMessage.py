@@ -4,7 +4,8 @@ from ..models import (
     DMImage,
     DMVoiceNote,
     DirectMessageSession,
-    DMMessage
+    DMMessage,
+    Post,
 )
 from .Account import AccountSerializer
 
@@ -32,7 +33,8 @@ class DMVoiceNoteSerializer(ModelSerializer):
 
 class DirectMessageSessionSerializer(ModelSerializer):
     initiator = AccountSerializer(read_only=True)
-    friend = AccountSerializer()
+    friend = AccountSerializer(read_only=True)
+    archived_by = AccountSerializer(read_only=True, many=True)
 
     class Meta:
         model = DirectMessageSession
@@ -43,13 +45,12 @@ class DirectMessageSessionSerializer(ModelSerializer):
 
 
 class DMMessageSerializer(ModelSerializer):
-    session = DirectMessageSession()
-    sender = AccountSerializer()
-    post = PostSerializer()
+    session = DirectMessageSessionSerializer(read_only=True)
+    sender = AccountSerializer(read_only=True)
+    post = PostSerializer(read_only=True)
 
-    image = DMImageSerializer()
-    voiceNote = DMVoiceNoteSerializer()
-    parent = SerializerMethodField(read_only=True)
+    image = DMImageSerializer(read_only=True)
+    voiceNote = DMVoiceNoteSerializer(read_only=True)
 
     class Meta:
         model = DMMessage
@@ -58,17 +59,42 @@ class DMMessageSerializer(ModelSerializer):
 
 
 
-    def get_parent(self, obj):
-        if type(obj) == dict:
-            if 'parent' in obj:
-                if obj['parent'] is not None:
-                    return DMMessageSerializer(obj['parent']).data
-                else:
-                    return None
-        else:
-            if obj.parent is not None:
-                return DMMessageSerializer(obj.parent_post).data
-            else:
-                return None
+    def create(self, validated_data):
+        image = None
+        if "image" in validated_data:
+            image = validated_data.pop("image")
+            image = DMImage(image=image)
+            image.save()
+
+
+        voiceNote = None
+        if "voiceNote" in validated_data:
+            voiceNote = validated_data.pop("voiceNote")
+            voiceNote = DMVoiceNote(voiceNote=voiceNote)
+            voiceNote.save()
+
+        session = None
+        if "session" in validated_data:
+            session = validated_data.pop("session")
+            session = DirectMessageSession.objects.all().filter(pk=session).first()
+
+        post = None
+        if "post" in validated_data:
+            post = validated_data.pop("post")
+            post = Post.objects.all().filter(pk=post).first()
+
+
+        instance = DMMessage(**validated_data)
+
+        instance.image = image
+        instance.voiceNote = voiceNote
+        instance.session = session
+        instance.post = post
+
+        instance.save()
+
+        return instance
+
+
 
 

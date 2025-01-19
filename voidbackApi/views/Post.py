@@ -279,7 +279,6 @@ def forYou(request: Request):
 
         exclude = request.data.get("exclude") # a list of already seen posts to be excluded from the query result
 
-        print(request.user.username)
 
 
         if not request.user.username:

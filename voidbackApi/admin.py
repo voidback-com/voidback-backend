@@ -12,7 +12,6 @@ from .models import (
     Follow,
     SearchQuery,
     Report,
-    InboxMessage,
     ResearchPaper,
     ResearchPaperImpression,
     Notification,
@@ -25,7 +24,8 @@ from .models import (
     DMMessage,
     DirectMessageSession,
     DMVoiceNote,
-    DMImage
+    DMImage,
+    AccountActiveStatus
 )
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
@@ -169,12 +169,18 @@ class DMMessageAdmin(ModelAdmin):
 
 
 @admin.register(DMVoiceNote)
-class DMVoiceNote(ModelAdmin):
+class DMVoiceNoteAdmin(ModelAdmin):
     pass
 
 
 @admin.register(DMImage)
-class DMImage(ModelAdmin):
+class DMImageAdmin(ModelAdmin):
+    pass
+
+
+
+@admin.register(AccountActiveStatus)
+class AccountActiveStatusAdmin(ModelAdmin):
     pass
 
 
