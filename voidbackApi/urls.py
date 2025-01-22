@@ -4,8 +4,6 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from tensorflow.python.ops.check_ops import assert_near_v2
-
 from .views import (
     # ACCOUNT
     send_otp,
