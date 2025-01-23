@@ -60,15 +60,7 @@ from .views import (
 
     # SEARCH
     SearchQueryView,
-
-
-
-
-    # INBOX
-    CreateInboxMessage,
-    InboxMessagesView,
-    deleteInboxMessage,
-
+    
 
     # RESEARCH
     MyResearchPaperView,
@@ -206,11 +198,6 @@ urlpatterns = [
     # SEARCH QUERY
     path("searchQuery", SearchQueryView.as_view()), # search query
 
-
-    #INBOX
-    path("inbox/forward", CreateInboxMessage.as_view()), # send an inbox message
-    path('inbox/get', InboxMessagesView.as_view()), # get all my inbox messages
-    path("inbox/delete/<int:message_id>", deleteInboxMessage), # delete an inbox message
 
 
     # RESEARCH

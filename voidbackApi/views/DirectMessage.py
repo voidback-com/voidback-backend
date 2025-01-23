@@ -1,10 +1,9 @@
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from voidbackApi.models import DirectMessage
 from voidbackApi.models.Account import AccountActiveStatus
 from voidbackApi.pagination.defaultPagination import DefaultSetPagination
 from django.db.models import Q
@@ -15,7 +14,6 @@ from ..serializers.DirectMessage import (
     DirectMessageSessionSerializer
 )
 from ..serializers.Account import Account
-from ..models.Notifications import newNotification
 import json
 
 

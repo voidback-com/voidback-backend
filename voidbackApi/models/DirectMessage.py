@@ -5,14 +5,14 @@ import hashlib, os
 
 
 class DMImage(models.Model):
-    image = models.ImageField(upload_to=f"images/dm/{hashlib.sha256(os.urandom(16)).hexdigest()}/", blank=False, null=False)
+    image = models.ImageField(upload_to=f"images/dm/", blank=False, null=False)
 
     def __str__(self):
         return str(self.pk)
 
 
 class DMVoiceNote(models.Model):
-    voiceNote = models.FileField(upload_to=f"voiceNotes/dm/{hashlib.sha256(os.urandom(16)).hexdigest()}/", blank=False, null=False)
+    voiceNote = models.FileField(upload_to=f"voiceNotes/dm/", blank=False, null=False)
     minutes = models.BigIntegerField(default=0)
     seconds = models.BigIntegerField(default=0)
 

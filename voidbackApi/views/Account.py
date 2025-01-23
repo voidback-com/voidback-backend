@@ -1,19 +1,13 @@
 from random import randint
-from django.contrib.auth import authenticate
-from django.core.mail import EmailMessage, EmailMultiAlternatives, send_mail
-from django.template import Context
-from django.template.loader import get_template, render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
 from django.utils import timezone
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
-
-from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer, AccountActiveStatusSerializer
 from ..models.Account import Account, AccountActiveStatus, OneTimePassword, Follow
 import json

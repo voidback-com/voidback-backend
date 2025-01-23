@@ -1,20 +1,16 @@
 from django.db.models import Q, Count
 from django.utils import timezone
-from rest_framework.generics import CreateAPIView, ListAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from Analytics.models import Event
 from voidbackApi.models.Post import ForYou
-from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Post import Symbol
 from ..models.dataHub import *
-from ..serializers.dataHub import DataHubQuerySerializer, DataHubAccountSerializer, DataHubPositionPollSerializer, DataHubFeedbackPollSerializer
+from ..serializers.dataHub import DataHubQuerySerializer, DataHubPositionPollSerializer, DataHubFeedbackPollSerializer
 from ..serializers.Post import PostMetadata, PostImpression, PostMetadataSerializer
-import json
 
 
 
