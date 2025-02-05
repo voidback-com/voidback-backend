@@ -2,7 +2,6 @@ from rest_framework.serializers import BooleanField, ImageField, IntegerField, L
 from voidbackApi.serializers.Post import PostSerializer
 from ..models import (
     DMImage,
-    DMVoiceNote,
     DirectMessageSession,
     DMMessage,
     Post,
@@ -17,16 +16,6 @@ class DMImageSerializer(ModelSerializer):
         model = DMImage
 
         fields = ["image"]
-
-
-
-class DMVoiceNoteSerializer(ModelSerializer):
-    voiceNote = FileField()
-
-    class Meta:
-        model = DMVoiceNote
-
-        fields = ['voiceNote']
 
 
 
@@ -50,7 +39,6 @@ class DMMessageSerializer(ModelSerializer):
     post = PostSerializer(read_only=True)
 
     image = DMImageSerializer(read_only=True)
-    voiceNote = DMVoiceNoteSerializer(read_only=True)
 
     class Meta:
         model = DMMessage
@@ -67,12 +55,6 @@ class DMMessageSerializer(ModelSerializer):
             image.save()
 
 
-        voiceNote = None
-        if "voiceNote" in validated_data:
-            voiceNote = validated_data.pop("voiceNote")
-            voiceNote = DMVoiceNote(voiceNote=voiceNote)
-            voiceNote.save()
-
         session = None
         if "session" in validated_data:
             session = validated_data.pop("session")
@@ -87,7 +69,6 @@ class DMMessageSerializer(ModelSerializer):
         instance = DMMessage(**validated_data)
 
         instance.image = image
-        instance.voiceNote = voiceNote
         instance.session = session
         instance.post = post
 

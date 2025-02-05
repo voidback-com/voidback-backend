@@ -89,13 +89,9 @@ class SendDirectMessage(APIView):
 
 
             image = request.FILES.get("image")
-            voiceNote = request.FILES.get("voiceNote")
 
             if image:
                 data['image'] = image
-
-            if voiceNote:
-                data['voiceNote'] = voiceNote
 
 
             data['sender'] = request.user
@@ -110,6 +106,7 @@ class SendDirectMessage(APIView):
                 return Response(DMMessageSerializer(r).data, status=200)
 
             else:
+                print(serializer.errors)
                 return Response(serializer.errors, status=400)
 
         except KeyboardInterrupt:
@@ -130,12 +127,13 @@ class DeleteDirectMessage(APIView):
 
             instance = DMMessage.objects.all().filter(pk=message).first()
 
-            if instance:
+
+            if instance and instance.sender.username == request.user.username:
                 instance.delete()
 
             return Response(data={"data": None}, status=200)
 
-        except Exception:
+        except KeyboardInterrupt:
             return Response(data={"error": "something went wrong, please try again!"}, status=400)
 
 

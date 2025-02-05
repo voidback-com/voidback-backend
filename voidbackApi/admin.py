@@ -22,7 +22,6 @@ from .models import (
     DataHubPositionPoll,
     DMMessage,
     DirectMessageSession,
-    DMVoiceNote,
     DMImage,
     AccountActiveStatus
 )
@@ -165,10 +164,6 @@ class DirectMessageSessionAdmin(ModelAdmin):
 class DMMessageAdmin(ModelAdmin):
     pass
 
-
-@admin.register(DMVoiceNote)
-class DMVoiceNoteAdmin(ModelAdmin):
-    pass
 
 
 @admin.register(DMImage)
