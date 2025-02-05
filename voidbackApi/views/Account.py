@@ -584,8 +584,9 @@ def getAccountStatus(request):
             serialized = AccountActiveStatusSerializer(instance)
             return Response(data=serialized.data, status=200)
 
+        print("no instance")
         return Response(data={"error": "Error couldn't retrieve the user's active status, none found."}, status=400)
-    except Exception:
+    except KeyboardInterrupt:
         return Response(data={"error": "Error couldn't retrieve the user's active status."}, status=400)
         
 
