@@ -19,21 +19,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="DMImage",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("image", models.ImageField(upload_to="images/dm/")),
-            ],
-        ),
-        migrations.CreateModel(
             name="PostImage",
             fields=[
                 (
@@ -276,45 +261,6 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         to="voidbackApi.datahubaccount",
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
-            name="DirectMessageSession",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("created_at", models.DateTimeField(auto_now_add=True)),
-                (
-                    "archived_by",
-                    models.ManyToManyField(
-                        blank=True,
-                        related_name="archived_by",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-                (
-                    "friend",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="friend",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-                (
-                    "initiator",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="initiator",
-                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],
@@ -594,58 +540,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name="DMMessage",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("message", models.TextField(blank=True, max_length=5000, null=True)),
-                ("sent_at", models.DateTimeField(auto_now_add=True)),
-                ("seen", models.BooleanField(blank=True, default=False)),
-                ("seen_at", models.DateTimeField(auto_now=True)),
-                (
-                    "image",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="voidbackApi.dmimage",
-                    ),
-                ),
-                (
-                    "sender",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="sender",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-                (
-                    "session",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="session",
-                        to="voidbackApi.directmessagesession",
-                    ),
-                ),
-                (
-                    "post",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        to="voidbackApi.post",
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
             name="PostImpression",
             fields=[
                 (
@@ -892,13 +786,6 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddIndex(
-            model_name="directmessagesession",
-            index=models.Index(
-                fields=["initiator", "friend", "created_at"],
-                name="voidbackApi_initiat_295f77_idx",
-            ),
-        ),
-        migrations.AddIndex(
             model_name="foryou",
             index=models.Index(
                 fields=[
@@ -933,13 +820,7 @@ class Migration(migrations.Migration):
                 name="voidbackApi_message_d1c5fe_idx",
             ),
         ),
-        migrations.AddIndex(
-            model_name="dmmessage",
-            index=models.Index(
-                fields=["session", "sender", "seen", "message", "seen_at", "sent_at"],
-                name="voidbackApi_session_f5dee8_idx",
-            ),
-        ),
+ 
         migrations.AddIndex(
             model_name="postimpression",
             index=models.Index(
