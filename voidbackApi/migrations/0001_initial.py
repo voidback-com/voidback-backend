@@ -173,28 +173,7 @@ class Migration(migrations.Migration):
                 ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
-        migrations.CreateModel(
-            name="AccountActiveStatus",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("last_active", models.DateTimeField(auto_now=True)),
-                (
-                    "account",
-                    models.OneToOneField(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-            ],
-        ),
+
         migrations.CreateModel(
             name="DataHubAccount",
             fields=[
