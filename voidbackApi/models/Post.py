@@ -1,6 +1,7 @@
 from datetime import timezone
 from django.db import models
 from .Account import Account
+from .EdgeRoom import EdgeRoom
 
 
 class PostImage(models.Model):
@@ -63,6 +64,7 @@ class Post(models.Model):
     parent_post = models.ForeignKey("Post", on_delete=models.CASCADE, null=True, blank=True, to_field="id")
     from_mobile = models.BooleanField(default=False, blank=True, null=True) # rendered differently on the browser when from the mobile editor
     rank = models.BigIntegerField(default=0, blank=True, null=True)
+    room = models.ForeignKey(EdgeRoom, on_delete=models.CASCADE, blank=True, null=True) #without an edge room the post is not visible except on the user's profile
 
 
     def __str__(self):

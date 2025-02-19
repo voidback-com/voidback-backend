@@ -7,3 +7,4 @@ from .Notifications import *
 from .Platform import *
 from .dataHub import  *
 from .DirectMessage import *
+from .EdgeRoom import *

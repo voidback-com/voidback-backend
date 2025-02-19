@@ -8,3 +8,4 @@ from .ReportManagement import *
 from .dataHub import *
 from .Nsfw import *
 from .DirectMessage import *
+from .EdgeRoom import *

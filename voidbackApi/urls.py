@@ -121,8 +121,11 @@ from .views import (
     DirectMessageSessionView,
     archiveSession,
     unarchiveSession,
-    getArchivedSessions
+    getArchivedSessions,
 
+
+    # Edge Room
+    CreateEdgeRoomView
 )
 
 
@@ -255,6 +258,11 @@ urlpatterns = [
     path("dm/archive/session", archiveSession),
     path("dm/unarchive/session", unarchiveSession),
     path("dm/get/archives", getArchivedSessions),
+
+
+
+    # Edge Room
+    path("edgeRoom/create", CreateEdgeRoomView.as_view())
 
 ]
 
