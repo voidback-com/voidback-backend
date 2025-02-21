@@ -23,7 +23,12 @@ from .models import (
     DMMessage,
     DirectMessageSession,
     DMImage,
-    AccountActiveStatus
+    AccountActiveStatus,
+    EdgeRoom,
+    EdgeRoomConfig,
+    MemberPermissions,
+    RoomMembership,
+    RoomCategory
 )
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.auth.models import Group
@@ -174,6 +179,29 @@ class DMImageAdmin(ModelAdmin):
 
 @admin.register(AccountActiveStatus)
 class AccountActiveStatusAdmin(ModelAdmin):
+    pass
+
+
+
+@admin.register(EdgeRoom)
+class EdgeRoomAdmin(ModelAdmin):
+    pass
+
+
+
+@admin.register(EdgeRoomConfig)
+class EdgeRoomConfigAdmin(ModelAdmin):
+    pass
+
+
+
+@admin.register(MemberPermissions)
+class MemberPermissionsAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(RoomMembership)
+class RoomMembershipAdmin(ModelAdmin):
     pass
 
 

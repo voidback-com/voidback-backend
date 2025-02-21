@@ -290,6 +290,8 @@ def forYou(request: Request):
                 posts = Post.objects.all().filter(
                     Q(hashtags__in=fy.hashtags) |
                     Q(symbols__in=fy.symbols) |
+                    Q(room__name__in=fy.rooms) |
+                    Q(room__category__in=fy.categories) |
                     Q(author__in=fy.accounts),
                     parent_post=None
                 ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(author=request.user.username).distinct()[0:10]
@@ -309,6 +311,8 @@ def forYou(request: Request):
             else:
                 data = {
                     "hashtags": [],
+                    "rooms": [],
+                    "categories": [],
                     "symbols": [],
                     "accounts": [],
                     "account": request.user

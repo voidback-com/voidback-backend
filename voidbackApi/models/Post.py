@@ -51,6 +51,7 @@ class Symbol(models.Model):
 
 
 class Post(models.Model):
+    title = models.TextField(blank=True, null=True)
     content = models.JSONField()
 
     image = models.ForeignKey(PostImage, related_name="post_image", blank=True, on_delete=models.CASCADE, null=True)
@@ -129,6 +130,8 @@ class ForYou(models.Model):
     symbols = models.JSONField()
     hashtags = models.JSONField()
     accounts = models.JSONField()
+    categories = models.JSONField(default={})
+    rooms = models.JSONField(default={})
     account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True, to_field="username")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -137,7 +140,7 @@ class ForYou(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['account', 'symbols', 'hashtags', 'accounts', 'created_at', "updated_at"])
+            models.Index(fields=['account', 'symbols', 'hashtags', 'accounts', "categories", "rooms", 'created_at', "updated_at"])
         ]
 
 

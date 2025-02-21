@@ -12,6 +12,7 @@ from ..serializers.EdgeRoom import (
 
 
 
+
 # create an edge room
 class CreateEdgeRoomView(CreateAPIView):
     serializer_class = EdgeRoomSerializer

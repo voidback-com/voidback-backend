@@ -1,4 +1,5 @@
 from rest_framework.serializers import BooleanField, ImageField, IntegerField, ListField, ModelSerializer, ReturnDict, SerializerMethodField
+from .EdgeRoom import EdgeRoomSerializer
 from .Account import PublicAccountSerializer, Account
 from ..models import (
     Hashtag,
@@ -56,6 +57,8 @@ class PostSerializer(ModelSerializer):
     author = PublicAccountSerializer(read_only=True)
 
     parent_post = SerializerMethodField(read_only=True)
+
+    room = EdgeRoomSerializer(read_only=True)
 
 
     class Meta:
