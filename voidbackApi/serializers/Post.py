@@ -7,7 +7,6 @@ from ..models import (
     PostImage,
     Post,
     PostImpression,
-    PostMetadata,
     ForYou
 )
 
@@ -155,27 +154,6 @@ class PostImpressionSerializer(ModelSerializer):
         return instance
 
 
-
-
-class PostMetadataSerializer(ModelSerializer):
-    post = PostSerializer(read_only=True)
-
-    class Meta:
-        model = PostMetadata
-
-        fields = "__all__"
-
-
-    def create(self, validated_data):
-        post = validated_data.pop("post")
-
-        p = Post.objects.all().filter(pk=post).first()
-
-        instance = PostMetadata(post=p, **validated_data)
-
-        instance.save()
-
-        return instance
 
 
 

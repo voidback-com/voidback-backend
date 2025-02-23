@@ -7,7 +7,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Analytics.models import Event
-from helpers.ml.text import textSentimentAnalysis
 from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Post import *
 from ..models.Post import *
@@ -64,23 +63,12 @@ class PostView(APIView):
             symbols = data['symbols']
             hashtags = data['hashtags']
 
-            if "from_mobile" in data:
-                text = data.pop("text")
-                toxicity = data.pop("toxicity")
-
 
             serializer = PostSerializer(data=data)
 
             if serializer.is_valid():
 
                 r = serializer.create(data)
-
-                if "from_mobile" in data:
-                    sentiment = textSentimentAnalysis(text)
-
-                    if sentiment:
-                        meta = PostMetadata(post=r, symbols=symbols, hashtags=hashtags, text=text, text_sentiment=sentiment, text_toxicity=toxicity)
-                        meta.save()
 
 
                 if data['parent_post']:
@@ -156,7 +144,7 @@ def topPosts(exclude: list, username=""):
     try:
 
         # most recent and highest ranking
-        top10 = Post.objects.all().filter(parent_post=None).order_by("-created_at").order_by("-updated_at").order_by('-rank').exclude(pk__in=exclude).exclude(author__username=username).distinct()[0:10]
+        top10 = Post.objects.all().filter(parent_post=None).order_by("-created_at").order_by("-updated_at").order_by('-rank').exclude(pk__in=exclude).exclude(author__username=username).exclude(title=None).exclude(room=None).distinct()[0:10]
 
         serializer = PostSerializer(top10, many=True)
 
@@ -254,7 +242,7 @@ def getAuthorPosts(request: Request):
     try:
         username = request.data.get("username")
 
-        instance = Post.objects.all().filter(author=username).order_by("-created_at")
+        instance = Post.objects.all().filter(author=username).exclude().order_by("-created_at")
 
         if instance:
 
@@ -291,10 +279,10 @@ def forYou(request: Request):
                     Q(hashtags__in=fy.hashtags) |
                     Q(symbols__in=fy.symbols) |
                     Q(room__name__in=fy.rooms) |
-                    Q(room__category__in=fy.categories) |
+                    Q(room__categories__category__in=fy.categories) |
                     Q(author__in=fy.accounts),
                     parent_post=None
-                ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(author=request.user.username).distinct()[0:10]
+                ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(author=request.user.username).exclude(room=None).exclude(title="").distinct()[0:10]
 
 
                 if len(posts) < 10:
@@ -450,31 +438,6 @@ class AccountPostImpressionView(APIView):
         except Exception:
             return Response(data={"error": "Error retrieving post impression!"}, status=400)
 
-
-
-
-# create post metadata
-class PostMetadataView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request: Request):
-        try:
-            data = request.data
-
-            if data:
-
-                serializer = PostMetadataSerializer(data=data)
-
-                if serializer.is_valid():
-                    serializer.create(data);
-                    return Response(data=serializer.data, status=200)
-                else:
-                    return Response(data=serializer.errors, status=400)
-            else:
-                return Response(data={"error": "Error processing the metadata!"}, status=400)
-                
-        except Exception:
-            return Response(status=400)
 
 
 

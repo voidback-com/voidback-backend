@@ -4,22 +4,15 @@ from .models import (
     Post,
     PostImage,
     PostImpression,
-    PostMetadata,
     Symbol,
     Hashtag,
     ForYou,
     Follow,
     SearchQuery,
     Report,
-    ResearchPaper,
-    ResearchPaperImpression,
     Notification,
     PlatformMessage,
     PlatformMessageImpression,
-    DataHubQuery,
-    DataHubAccount,
-    DataHubFeedbackPoll,
-    DataHubPositionPoll,
     DMMessage,
     DirectMessageSession,
     DMImage,
@@ -68,10 +61,6 @@ class PostImpressionAdmin(ModelAdmin):
     search_fields = ['post__id', "account__username"]
 
 
-@admin.register(PostMetadata)
-class PostMetadataAdmin(ModelAdmin):
-    search_fields = ['post__id']
-
 
 @admin.register(Symbol)
 class SymbolAdmin(ModelAdmin):
@@ -106,17 +95,6 @@ class ReportAdmin(ModelAdmin):
 
 
 
-@admin.register(ResearchPaper)
-class ResearchPaperAdmin(ModelAdmin):
-    search_fields = ['title', 'author__username']
-
-
-
-@admin.register(ResearchPaperImpression)
-class ResearchPaperImpressionAdmin(ModelAdmin):
-    search_fields = ['paper__title', 'impression', 'account__username']
-
-
 
 @admin.register(Notification)
 class NotificationAdmin(ModelAdmin):
@@ -132,30 +110,6 @@ class PlatformMessageAdmin(ModelAdmin):
 @admin.register(PlatformMessageImpression)
 class PlatformMessageImpressionAdmin(ModelAdmin):
     search_fields = ['message__title', 'account__username']
-
-
-
-@admin.register(DataHubAccount)
-class DataHubAccountAdmin(ModelAdmin):
-    search_fields = ['account__username']
-
-
-
-@admin.register(DataHubQuery)
-class DataHubQueryAdmin(ModelAdmin):
-    search_fields = ['account__account__username']
-
-
-
-
-@admin.register(DataHubPositionPoll)
-class DataHubPositionPollAdmin(ModelAdmin):
-    search_fields = ['account__account__username']
-
-
-@admin.register(DataHubFeedbackPoll)
-class DataHubFeedbackPollAdmin(ModelAdmin):
-    search_fields = ['account__account__username']
 
 
 
@@ -202,6 +156,11 @@ class MemberPermissionsAdmin(ModelAdmin):
 
 @admin.register(RoomMembership)
 class RoomMembershipAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(RoomCategory)
+class RoomCategoryAdmin(ModelAdmin):
     pass
 
 

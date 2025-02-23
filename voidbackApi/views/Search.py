@@ -4,7 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..serializers.Search import *
-from ..serializers import AccountSerializer, ResearchPaperSerializer, PostMetadata, PostSerializer, ResearchPaper, Account
+from ..serializers import AccountSerializer, PostSerializer, Account, EdgeRoomSerializer, Post, EdgeRoom
 from ..models.Search import *
 
 
@@ -93,36 +93,34 @@ def exploreSearch(request: Request):
 
 
 
-        if category == "research":
-            instance = ResearchPaper.objects.all().filter(title__icontains=query).order_by("-created_at")[skip:limit]
-
-            serializer = ResearchPaperSerializer(instance, many=True)
-
-            return Response(serializer.data, status=200)
-
-
-        elif category == "accounts":
+        if category == "accounts":
             instance = Account.objects.all().filter(username__icontains=query, full_name__icontains=query).order_by("-created_at")[skip:limit]
 
             serializer = AccountSerializer(instance, many=True)
 
             return Response(serializer.data, status=200)
-        
 
-        else:
-            posts = []
-            instance = PostMetadata.objects.all().filter(text__icontains=query)[skip:limit]
 
-            for i in instance:
-                posts.append(i.post)
+        elif category == "rooms":
+            rooms = EdgeRoom.objects.all().filter(name__text__search=query).order_by("-rank")[skip:limit]
+
+            serializer = EdgeRoomSerializer(rooms, many=True)
+
+            return Response(serializer.data, status=200)
+            
+
+        elif category == "posts":
+
+            posts = Post.objects.all().filter(title__text__search=query).order_by("-rank")
 
             serializer = PostSerializer(posts, many=True)
 
             return Response(serializer.data, status=200)
+            
 
+        
 
-
-    except Exception:
+    except KeyError:
         return Response(data={"error": "unexpected search query!"}, status=400)
 
 
@@ -134,13 +132,13 @@ def exploreSearchCount(request: Request):
     try:
         query = request.query_params.get("query", None)
 
-        postCount = PostMetadata.objects.all().filter(text__icontains=query).count()
-        researchCount = ResearchPaper.objects.all().filter(title__icontains=query).count()
-        accountCount = Account.objects.all().filter(username__icontains=query, full_name__icontains=query).count()
+        postCount = Post.objects.all().filter(title__text__search=query).count()
+        accountCount = Account.objects.all().filter(username__text__search=query, full_name__text__search=query).count()
+        roomsCount = EdgeRoom.objects.all().filter(name__text__search=query).count()
 
-        return Response({"posts": postCount, "research": researchCount, "accounts": accountCount})
+        return Response({"posts": postCount, "rooms": roomsCount, "accounts": accountCount})
 
-    except Exception:
+    except KeyError:
         return Response(data={"error": "unexpected search query!"}, status=400)
 
 

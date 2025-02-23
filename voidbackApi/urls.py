@@ -32,7 +32,6 @@ from .views import (
     getPostById,
     getPostImpressions,
     AccountPostImpressionView,
-    PostMetadataView,
 
     SymbolView,
     HashtagView,
@@ -62,16 +61,6 @@ from .views import (
     SearchQueryView,
     
 
-    # RESEARCH
-    MyResearchPaperView,
-    makePaperImpression,
-    getAllPaperImpressions,
-    getMyPaperImpression,
-    TopResearchPapersView,
-    searchPapers,
-    getAccountResearch,
-    getResearchPaper,
-
 
     # EXPLORE
     exploreSearch,
@@ -98,18 +87,6 @@ from .views import (
 
     # REPORT
     ReportView,
-
-
-    # DATA-HUB
-    DataHubQueryView,
-    DataHubFeedbackPollView,
-    DataHubPollView,
-
-
-
-    # ML Models
-    textNSFW,
-    imageNSFW,
 
 
     # DMs
@@ -173,7 +150,6 @@ urlpatterns = [
     path("post/impressions/<int:post_id>", getPostImpressions), # get specific post impressions
     path("post/account/impression/<int:post_id>", AccountPostImpressionView.as_view()), # get specific liked post
     path("post/account/liked", getAccountLikedPosts), # get all liked posts by specific account
-    path("post/metadata", PostMetadataView.as_view()), # create post metadata
     path("post/search", searchPosts), # search for a post
     path("post/author", AuthorPostsView.as_view()), # get all the posts of a specific author
 
@@ -203,17 +179,6 @@ urlpatterns = [
 
 
 
-    # RESEARCH
-    path("researchPaper/myResearch", MyResearchPaperView.as_view()),
-    path("researchPaper/makeImpression/<int:paper_id>", makePaperImpression),
-    path("researchPaper/allImpressions/<int:paper_id>", getAllPaperImpressions),
-    path("researchPaper/myImpression/<int:paper_id>", getMyPaperImpression),
-    path("researchPaper/topResearch", TopResearchPapersView.as_view()),
-    path("researchPaper/search", searchPapers),
-    path("researchPaper/accountResearch", getAccountResearch),
-    path("researchPaper/getPaper/<int:paper_id>", getResearchPaper),
-
-
     # EXPLORE
     path("exploreSearch", exploreSearch),
     path("exploreSearchCount", exploreSearchCount),
@@ -238,14 +203,6 @@ urlpatterns = [
     # REPORT
     path("report", ReportView.as_view()),
 
-
-    # DATA-HUB
-    path("data-hub/query", DataHubQueryView.as_view()),
-    path("data-hub/poll/feedback", DataHubFeedbackPollView.as_view()),
-    path("data-hub/poll/position", DataHubPollView.as_view()),
-
-    path("nsfw/text", textNSFW),
-    path("nsfw/image", imageNSFW),
 
 
     # DMs

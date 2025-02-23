@@ -102,30 +102,6 @@ class PostImpression(models.Model):
 
 
 
-
-
-class PostMetadata(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, to_field="id")
-    symbols = models.JSONField()
-    hashtags = models.JSONField()
-    text_sentiment = models.TextField()
-    partial_sentiment = models.JSONField(null=True)
-    text_toxicity = models.JSONField()
-    text = models.TextField(max_length=20000) # post text limit is 20k chars
-
-
-    def __str__(self):
-        return str(self.post.pk)
-
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['post', 'symbols', 'hashtags', 'text_sentiment', 'partial_sentiment', 'text_toxicity', 'text'])
-        ]
-
-
-
-
 class ForYou(models.Model):
     symbols = models.JSONField()
     hashtags = models.JSONField()

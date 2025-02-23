@@ -5,7 +5,7 @@ from transformers import pipeline
 
 def textSentimentAnalysis(text):
     try:
-        model = pipeline("text-classification", "models/multilingual-sentiment-analysis", device="cpu")
+        model = pipeline("text-classification", "../../models/multilingual-sentiment-analysis", device="cpu")
 
         data = model(text)
 
@@ -23,21 +23,24 @@ def textSentimentAnalysis(text):
 
         return data
 
-    except Exception:
+    except KeyboardInterrupt:
         return None
-
 
 
 def textToxicity(text):
     try:
-        model = pipeline("text-classification", "models/distilbert-nsfw-text-classifier", device="cpu")
+        model = pipeline("text-classification", "../../models/distilbert-nsfw-text-classifier", device="cpu")
 
         data = model(text)
 
         return data[0]
 
-    except Exception:
-        return None
+    except KeyboardInterrupt:
+        return
 
 
 
+
+x = textToxicity("Hello")
+y = textSentimentAnalysis("Hello WOrld")
+print(x, y)
