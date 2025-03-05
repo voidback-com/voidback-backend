@@ -36,7 +36,7 @@ class PostView(APIView):
             data['image'] = request.FILES.get("image", None)
 
 
-            if data['room']:
+            if 'room' in data and data['room']:
                 inst =  EdgeRoom.objects.all().filter(name=data['room']).first()
                 data['room'] = inst
 
