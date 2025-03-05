@@ -1,6 +1,6 @@
 from rest_framework import permissions
 from rest_framework.request import Request
-from ..models.EdgeRoom import RoomMembership
+from ..models.EdgeRoom import EdgeRoom, RoomMembership
 
 
 
@@ -17,6 +17,12 @@ class IsRoomMember(permissions.BasePermission):
 
             if member:
                 return True
+
+            else:
+                instance = EdgeRoom.objects.all().filter(config__admin__username=request.user.username).first()
+
+                if instance:
+                    return True
 
             return False
 
