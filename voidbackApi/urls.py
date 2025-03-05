@@ -102,7 +102,13 @@ from .views import (
 
 
     # Edge Room
-    CreateEdgeRoomView
+    CreateEdgeRoomView,
+    ListMyEdgeRoomsAdminView,
+    ListMyEdgeRoomsView,
+    ListRoomPostsView,
+    getMembership,
+    joinEdgeRoom,
+    getTopRankingRooms
 )
 
 
@@ -219,7 +225,14 @@ urlpatterns = [
 
 
     # Edge Room
-    path("edgeRoom/create", CreateEdgeRoomView.as_view())
+    path("edgeRoom/create", CreateEdgeRoomView.as_view()),
+    path("edgeRoom/list", ListMyEdgeRoomsView.as_view()),
+    path("edgeRoom/list/admin", ListMyEdgeRoomsAdminView.as_view()),
+    path("edgeRoom/list/posts", ListRoomPostsView.as_view()),
+    path("edgeRoom/membership", getMembership),
+    path("edgeRoom/join", joinEdgeRoom),
+    path("edgeRoom/topRanking", getTopRankingRooms)
+
 
 ]
 

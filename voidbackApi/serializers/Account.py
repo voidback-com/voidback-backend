@@ -13,7 +13,7 @@ class AccountSerializer(ModelSerializer):
     class Meta:
         model = Account
 
-        fields = ["email", "full_name", "username", "avatar", "bio", "site_link", "rank", "birth_date", "password", "is_staff", "isVerified", "email_verified"]
+        fields = ["email", "full_name", "username", "avatar", "bio", "site_link", "rank", "birth_date", "password", "is_staff", "isVerified", "email_verified", "id"]
         write_only_fields = ['birth_date']
 
 

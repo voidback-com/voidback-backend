@@ -4,7 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..serializers.Search import *
-from ..serializers import AccountSerializer, PostSerializer, Account, EdgeRoomSerializer, Post, EdgeRoom
+from ..serializers import AccountSerializer, PostSerializer, Account, EdgeRoomSerializer, Post
 from ..models.Search import *
 
 
@@ -101,17 +101,9 @@ def exploreSearch(request: Request):
             return Response(serializer.data, status=200)
 
 
-        elif category == "rooms":
-            rooms = EdgeRoom.objects.all().filter(name__text__search=query).order_by("-rank")[skip:limit]
-
-            serializer = EdgeRoomSerializer(rooms, many=True)
-
-            return Response(serializer.data, status=200)
-            
-
         elif category == "posts":
 
-            posts = Post.objects.all().filter(title__text__search=query).order_by("-rank")
+            posts = Post.objects.all().filter(title__contains=query, room__categories__category__in=[query]).order_by("-rank")[skip:limit]
 
             serializer = PostSerializer(posts, many=True)
 
@@ -132,11 +124,10 @@ def exploreSearchCount(request: Request):
     try:
         query = request.query_params.get("query", None)
 
-        postCount = Post.objects.all().filter(title__text__search=query).count()
-        accountCount = Account.objects.all().filter(username__text__search=query, full_name__text__search=query).count()
-        roomsCount = EdgeRoom.objects.all().filter(name__text__search=query).count()
+        postCount = Post.objects.all().filter(title__contains=query).count()
+        accountCount = Account.objects.all().filter(username__contains=query, full_name__contains=query).count()
 
-        return Response({"posts": postCount, "rooms": roomsCount, "accounts": accountCount})
+        return Response({"posts": postCount, "accounts": accountCount})
 
     except KeyError:
         return Response(data={"error": "unexpected search query!"}, status=400)

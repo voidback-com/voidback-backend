@@ -10,6 +10,7 @@ from Analytics.models import Event
 from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Post import *
 from ..models.Post import *
+from ..models.EdgeRoom import EdgeRoom
 from ..models.Notifications import newNotification
 import json
 
@@ -34,6 +35,14 @@ class PostView(APIView):
 
             data['image'] = request.FILES.get("image", None)
 
+
+            if data['room']:
+                inst =  EdgeRoom.objects.all().filter(name=data['room']).first()
+                data['room'] = inst
+
+                if inst:
+                    inst.rank+=1
+                    inst.save()
 
 
             if data['parent_post']:
@@ -89,9 +98,10 @@ class PostView(APIView):
                 return Response(data=dat, status=200)
 
             else:
+                print("Here")
                 return Response(data=serializer.errors, status=400)
 
-        except Exception:
+        except KeyboardInterrupt:
             return Response(data={"error": "Failed to validate post data, please try again!"},status=400)
 
 
@@ -144,7 +154,7 @@ def topPosts(exclude: list, username=""):
     try:
 
         # most recent and highest ranking
-        top10 = Post.objects.all().filter(parent_post=None).order_by("-created_at").order_by("-updated_at").order_by('-rank').exclude(pk__in=exclude).exclude(author__username=username).exclude(title=None).exclude(room=None).distinct()[0:10]
+        top10 = Post.objects.all().filter(parent_post=None).order_by("-created_at").order_by("-updated_at").order_by('-rank').exclude(pk__in=exclude).exclude(title=None).exclude(room=None).distinct()[0:10]
 
         serializer = PostSerializer(top10, many=True)
 
@@ -282,7 +292,7 @@ def forYou(request: Request):
                     Q(room__categories__category__in=fy.categories) |
                     Q(author__in=fy.accounts),
                     parent_post=None
-                ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(author=request.user.username).exclude(room=None).exclude(title="").distinct()[0:10]
+                ).order_by("-created_at").order_by("-updated_at").order_by("-rank").exclude(pk__in=exclude).exclude(room=None).exclude(title="").distinct()[0:10]
 
 
                 if len(posts) < 10:
@@ -764,5 +774,7 @@ def getHashtagPosts(request: Request, hashtag: str):
 
     except Exception:
         return Response(data={"error": f"Error fetching symbol posts!"}, status=200)
+
+
 
 

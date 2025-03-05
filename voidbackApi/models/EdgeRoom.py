@@ -4,7 +4,7 @@ from .Account import Account
 
 
 class RoomCategory(models.Model):
-    category = models.TextField(max_length=60, blank=True)
+    category = models.TextField(max_length=20, blank=True)
     rank = models.BigIntegerField(default=0, blank=True) # category rank across the platform
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -92,6 +92,7 @@ class RoomMembership(models.Model):
     rank = models.BigIntegerField(default=0, blank=True) # member rank within the edgeRoom
     joined_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
 
 
