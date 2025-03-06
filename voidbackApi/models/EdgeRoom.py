@@ -14,8 +14,7 @@ class RoomCategory(models.Model):
 
 
 class EdgeRoomConfig(models.Model):
-    # members have to be added by pre-existing members (if the room is private) if public then anyone can join immediately
-    isPublic = models.BooleanField(default=True, blank=True)
+    # all rooms are public and anyone can join
     admin = models.ForeignKey(Account, on_delete=models.CASCADE)
     default_member_permissions = models.JSONField(blank=False) # the default permissions for joining members
     created_at = models.DateTimeField(auto_now_add=True)
@@ -64,8 +63,6 @@ class MemberPermissions(models.Model):
     can_remove_members = models.BooleanField(blank=True, default=False)
     can_remove_moderators = models.BooleanField(blank=True, default=False)
     can_add_moderators = models.BooleanField(blank=True, default=False)
-
-
 
 
     # Normal Member Actions

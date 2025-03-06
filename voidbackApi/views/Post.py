@@ -10,7 +10,7 @@ from Analytics.models import Event
 from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Post import *
 from ..models.Post import *
-from ..models.EdgeRoom import EdgeRoom
+from ..models.EdgeRoom import EdgeRoom,RoomMembership
 from ..models.Notifications import newNotification
 import json
 
@@ -35,6 +35,20 @@ class PostView(APIView):
 
             if 'room' in data and data['room']:
                 inst =  EdgeRoom.objects.all().filter(name=data['room']).first()
+                membership = RoomMembership.objects.all().filter(room__name=data['room'], account=request.user).first()
+
+                if not membership:
+                    return Response(data={"error": "You are not a member of this room!"}, status=400)
+
+                else:
+                    if not membership.permissions.can_post:
+                        return Response(data={"error": "You don't have permission to post, ask a moderator/admin to update your permissions!"}, status=400)
+
+                    elif membership.permissions.can_post and not membership.permissions.can_post_image and 'image' in data:
+                        return Response(data={"error": "You don't have permission to post an image, ask a moderator/admin to update your permissions or remove the image!"}, status=400)
+
+
+
                 data['room'] = inst
 
                 if inst:
@@ -95,10 +109,9 @@ class PostView(APIView):
                 return Response(data=dat, status=200)
 
             else:
-                print("Here")
                 return Response(data=serializer.errors, status=400)
 
-        except KeyboardInterrupt:
+        except Exception:
             return Response(data={"error": "Failed to validate post data, please try again!"},status=400)
 
 

@@ -5,7 +5,6 @@ from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIVie
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import Response
-
 from voidbackApi.models.EdgeRoom import MemberPermissions
 from voidbackApi.models.Post import Post
 from voidbackApi.pagination.defaultPagination import DefaultSetPagination
