@@ -6,7 +6,7 @@ from ..models import (
     MemberPermissions,
     RoomMembership
 )
-from .Account import PublicAccountSerializer, Account
+from .Account import AccountSerializer, PublicAccountSerializer, Account
 
 
 
@@ -27,14 +27,32 @@ class EdgeRoomConfigSerializer(ModelSerializer):
 
         fields = "__all__"
 
+ 
 
-    
+class WriteEdgeRoomConfigSerializer(ModelSerializer):
 
-class EdgeRoomSerializer(ModelSerializer):
+    class Meta:
+        model = EdgeRoomConfig
 
+        fields = "__all__"
+
+
+
+class ViewEdgeRoomSerializer(ModelSerializer):
+    config = EdgeRoomConfigSerializer(read_only=True)
     categories = RoomCategorySerializer(many=True)
-    config = EdgeRoomConfigSerializer()
 
+
+    class Meta:
+        model = EdgeRoom
+
+        fields = "__all__"
+
+  
+
+class CreateEdgeRoomSerializer(ModelSerializer):
+    categories = RoomCategorySerializer(many=True)
+    config = WriteEdgeRoomConfigSerializer()
 
 
     class Meta:
@@ -44,7 +62,6 @@ class EdgeRoomSerializer(ModelSerializer):
 
 
     def create(self, validated_data):
-
         config = validated_data.pop("config")
 
         conf = EdgeRoomConfig(**config)
@@ -99,7 +116,7 @@ class MemberPermissionsSerializer(ModelSerializer):
 
 class RoomMembershipSerializer(ModelSerializer):
 
-    room = EdgeRoomSerializer(read_only=True)
+    room = ViewEdgeRoomSerializer(read_only=True)
     permissions = MemberPermissionsSerializer()
     account = PublicAccountSerializer(read_only=True)
 

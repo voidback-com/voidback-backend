@@ -14,10 +14,11 @@ from ..serializers.Post import PostSerializer
 from ..serializers.EdgeRoom import (
     EdgeRoom,
     EdgeRoomConfig,
-    EdgeRoomSerializer,
     MemberPermissionsSerializer,
     RoomMembershipSerializer,
-    RoomMembership
+    RoomMembership,
+    CreateEdgeRoomSerializer,
+    ViewEdgeRoomSerializer
 )
 
 
@@ -28,8 +29,7 @@ from ..serializers.EdgeRoom import (
 # create an edge room
 class CreateEdgeRoomView(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = EdgeRoomSerializer
-    permission_classes = [IsAuthenticated]
+    serializer_class = CreateEdgeRoomSerializer
 
 # Make sure to create an edgeMember for the admin 
 
@@ -38,7 +38,7 @@ class CreateEdgeRoomView(CreateAPIView):
 class ListMyEdgeRoomsView(ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = DefaultSetPagination
-    serializer_class = EdgeRoomSerializer
+    serializer_class = ViewEdgeRoomSerializer
 
 
     def get_queryset(self):
@@ -59,7 +59,7 @@ class ListMyEdgeRoomsView(ListAPIView):
 class ListMyEdgeRoomsAdminView(ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = DefaultSetPagination
-    serializer_class = EdgeRoomSerializer
+    serializer_class = ViewEdgeRoomSerializer
 
 
     def get_queryset(self):
@@ -73,7 +73,7 @@ class ListMyEdgeRoomsAdminView(ListAPIView):
 
 # returns all the posts in the edge room
 class ListRoomPostsView(ListAPIView):
-    permission_classes = [IsRoomMember]
+    permission_classes = [AllowAny]
     pagination_class = DefaultSetPagination
     serializer_class = PostSerializer
 
@@ -99,9 +99,13 @@ def getMembership(request: Request):
 
         instance = RoomMembership.objects.all().filter(account=request.user, room__name=room).first()
 
-        serializer = RoomMembershipSerializer(instance)
+        if instance:
 
-        return Response(serializer.data, status=200)
+            serializer = RoomMembershipSerializer(instance)
+
+            return Response(serializer.data, status=200)
+
+        return Response(data={"error": "you are not a member of this room!"}, status=404)
 
     except Exception:
         return Response({"error": "Failed to fetch your room mebership."}, status=400)
@@ -111,7 +115,7 @@ def getMembership(request: Request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def getTopRankingRooms(request: Request):
     try:
         rooms = EdgeRoom.objects.all().order_by("-rank")[0:20]
@@ -120,7 +124,7 @@ def getTopRankingRooms(request: Request):
         data = []
 
         for room in rooms:
-            serialized = EdgeRoomSerializer(room)
+            serialized = ViewEdgeRoomSerializer(room)
             members = RoomMembership.objects.all().filter(room=room).count()
             res = {"room": serialized.data, "members": members}
             data.append(res)

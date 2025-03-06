@@ -145,7 +145,6 @@ urlpatterns = [
     path("account/isFollowingBack", isFollowingBack), # is account following me
     path("account/getAccount/<str:username>", getAccountByUsername),
     path("account/getMutuals/<str:username>", getAccountMutuals),
-    path("account/recommendations", getAccountRecommendations),
     path("account/status", getAccountStatus),
 
 
