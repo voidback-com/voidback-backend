@@ -358,6 +358,31 @@ def getUsernameFollowers(request: Request, username: str):
         
 
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def getFriends(request: Request, username: str):
+    try:
+        following = Follow.objects.all().filter(follower=username).values_list("following__username")
+
+        friends = Follow.objects.all().filter(following__username=username, follower__username__in=following).values("follower__username").order_by('-created_at')
+
+        accounts = []
+
+        for friend in friends:
+            accounts.append(Account.objects.all().filter(username=friend['follower__username']).first())
+
+
+        if len(accounts):
+            s = PublicAccountSerializer(accounts, many=True)
+            return Response(data=s.data, status=200)
+
+        return Response(data=[], status=200)
+
+    except KeyboardInterrupt:
+        return Response(data={"error": "failed to fetch friends."}, status=400)
+
+     
+
 # get account by username
 @api_view(["GET"])
 @permission_classes([AllowAny])

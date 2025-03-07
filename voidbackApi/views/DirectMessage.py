@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from voidbackApi.models.Account import AccountActiveStatus
+from voidbackApi.models.Account import AccountActiveStatus, Follow
 from voidbackApi.pagination.defaultPagination import DefaultSetPagination
 from django.db.models import Q
 from ..serializers.DirectMessage import (
@@ -34,17 +34,26 @@ class CreateDMSession(APIView):
             if not data['friend']:
                 return Response(data={"error": "This account does not exist!"}, status=400)
 
-            isFollowing = Follow.objects.all().filter(following=data['initator'], follower=data['friend']).first()
+            isFollowing = Follow.objects.all().filter(following=data['initiator'], follower=data['friend']).first()
+
 
             if not isFollowing:
                 return Response(data={"error": "This account does not follow you!"}, status=400)
 
+
+            # check if session exists
+            sess = DirectMessageSession.objects.all().filter(Q(initiator=data['initiator']) | Q(friend=data['initiator']) | Q(initiator=data['friend']) | Q(friend=data['friend'])).first()
+
+            if sess:
+                serialized = DirectMessageSessionSerializer(sess)
+                return Response(serialized.data, status=200)
+
             serializer = DirectMessageSessionSerializer(data=data)
 
             if serializer.is_valid():
-                serializer.create(data)
+                s = serializer.create(data)
 
-                return Response(serializer.data, status=200)
+                return Response(DirectMessageSessionSerializer(s).data, status=200)
 
         except Exception:
             return Response(data={"error": "something went wrong, please try again!"}, status=400)
@@ -62,7 +71,7 @@ class DeleteDMSession(APIView):
 
             session = data.get("session")
 
-            sess = DirectMessageSession.objects.all().filter(pk=session)
+            sess = DirectMessageSession.objects.all().filter(pk=session).first()
 
 
             if sess:
@@ -74,7 +83,7 @@ class DeleteDMSession(APIView):
             else:
                 return Response(data={"data": None}, status=200)
 
-        except Exception:
+        except KeyboardInterrupt:
             return Response(data={"error": "something went wrong, please try again!"}, status=400)
 
 

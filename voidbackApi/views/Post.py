@@ -37,14 +37,14 @@ class PostView(APIView):
                 inst =  EdgeRoom.objects.all().filter(name=data['room']).first()
                 membership = RoomMembership.objects.all().filter(room__name=data['room'], account=request.user).first()
 
-                if not membership:
+                if not membership and inst.config.admin!=request.user:
                     return Response(data={"error": "You are not a member of this room!"}, status=400)
 
                 else:
-                    if not membership.permissions.can_post:
+                    if membership and not membership.permissions.can_post and inst.config.admin!=request.user:
                         return Response(data={"error": "You don't have permission to post, ask a moderator/admin to update your permissions!"}, status=400)
 
-                    elif membership.permissions.can_post and not membership.permissions.can_post_image and 'image' in data:
+                    elif membership and membership.permissions.can_post and not membership.permissions.can_post_image and 'image' in data and inst.config.admin!=request.user:
                         return Response(data={"error": "You don't have permission to post an image, ask a moderator/admin to update your permissions or remove the image!"}, status=400)
 
 

@@ -25,6 +25,7 @@ from .views import (
     getAccountMutuals,
     getAccountRecommendations,
     getAccountStatus,
+    getFriends,
 
 
     # POST
@@ -146,6 +147,7 @@ urlpatterns = [
     path("account/getAccount/<str:username>", getAccountByUsername),
     path("account/getMutuals/<str:username>", getAccountMutuals),
     path("account/status", getAccountStatus),
+    path("account/friends/<str:username>", getFriends),
 
 
 
