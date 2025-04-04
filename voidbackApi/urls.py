@@ -1,9 +1,4 @@
 from django.urls import path, include
-from rest_framework_simplejwt.views import (
-    TokenBlacklistView,
-    TokenObtainPairView,
-    TokenRefreshView
-)
 from .views import (
     # ACCOUNT
     send_otp,
@@ -12,12 +7,13 @@ from .views import (
     resetPassword,
     AccountView,
     SignupView,
+    LoginView,
+    LogoutView,
     followAccount,
     unfollowAccount,
     isAccountFollowed,
     isFollowingBack,
     getAccountByUsername,
-    getAccountLikedPosts,
     getUsernameFollowing,
     getUsernameFollowingCount,
     getUsernameFollowers,
@@ -28,51 +24,28 @@ from .views import (
     getFriends,
 
 
-    # POST
-    PostView,
-    getPostById,
-    getPostImpressions,
-    AccountPostImpressionView,
-
-    SymbolView,
-    HashtagView,
-
-    getHashtagPostsCount,
-    getSymbolPostsCount,
-    
-    getTrendingHashtags, 
-    searchHashtags,
-
-    getPostRepliesCount,
-    PostRepliesView,
-
-    getTrendingSymbols,
-    searchSymbols,
-
-    searchPosts,
-
-    forYou,
-
-    AuthorPostsView,
-
-
+    # WRITEUP
+    WriteUpView,
+    getMySeries,
+    newSeries,
+    TagsListView,
+    WriteUpListView,
+    getWriteUp,
+    getImpressions,
+    likeWriteUp,
+    CommentView,
+    CommentListView,
+    commentsCount,
+    likeComment,
+    getCommentImpressions,
+    AccountWriteUpListView,
+    SeriesListView,
+    LikedWriteUpListView,
 
 
     # SEARCH
     SearchQueryView,
-    
 
-
-    # EXPLORE
-    exploreSearch,
-    exploreSearchCount,
-
-    # SYMBOL
-    getSymbolPosts,
-
-
-    # HASHTAG
-    getHashtagPosts,
 
 
     # NOTIFICATIONS
@@ -89,27 +62,6 @@ from .views import (
     # REPORT
     ReportView,
 
-
-    # DMs
-    CreateDMSession,
-    DeleteDMSession,
-    SendDirectMessage,
-    DeleteDirectMessage,
-    getSessions,
-    DirectMessageSessionView,
-    archiveSession,
-    unarchiveSession,
-    getArchivedSessions,
-
-
-    # Edge Room
-    CreateEdgeRoomView,
-    ListMyEdgeRoomsAdminView,
-    ListMyEdgeRoomsView,
-    ListRoomPostsView,
-    getMembership,
-    joinEdgeRoom,
-    getTopRankingRooms
 )
 
 
@@ -120,9 +72,8 @@ urlpatterns = [
 
     # AUTHENTICATION
     path("signup", SignupView.as_view()),
-    path("token", TokenObtainPairView.as_view()),
-    path("token/refresh", TokenRefreshView.as_view()),
-    path('token/blacklist', TokenBlacklistView.as_view()),
+    path("login", LoginView.as_view()),
+    path("logout", LogoutView.as_view()),
 
 
     # ACCOUNT
@@ -148,53 +99,35 @@ urlpatterns = [
     path("account/getMutuals/<str:username>", getAccountMutuals),
     path("account/status", getAccountStatus),
     path("account/friends/<str:username>", getFriends),
+    path("account/writeups", AccountWriteUpListView.as_view()),
+    path("account/series", SeriesListView.as_view()),
 
 
 
-    # POST
-    path("post", PostView.as_view()), # create, delete or view post
-    path("post/get/<int:post_id>", getPostById), # get post by id
-    path("post/impressions/<int:post_id>", getPostImpressions), # get specific post impressions
-    path("post/account/impression/<int:post_id>", AccountPostImpressionView.as_view()), # get specific liked post
-    path("post/account/liked", getAccountLikedPosts), # get all liked posts by specific account
-    path("post/search", searchPosts), # search for a post
-    path("post/author", AuthorPostsView.as_view()), # get all the posts of a specific author
+    # WRITEUPs
+    path("writeup", WriteUpView.as_view()), # create, delete or view writeup
+    path("writeup/list", WriteUpListView.as_view()),
+    path("getWriteUp", getWriteUp),
+    path("writeup/impressions", getImpressions),
+    path("writeup/like", likeWriteUp),
+    path("writeup/comment", CommentView.as_view()),
+    path("writeup/comments", CommentListView.as_view()),
+    path("writeup/comments/count", commentsCount),
+    path("writeup/comment/like", likeComment),
+    path("writeup/comment/impressions", getCommentImpressions),
+    path("writeup/list/liked", LikedWriteUpListView.as_view()),
 
 
-    path("post/repliesCount/<int:parent_post_id>", getPostRepliesCount), # get replies count to parent_post
-    path("post/replies", PostRepliesView.as_view()), # get replies to parent_post
+    # WriteUp Tags
+    path("getSeries", getMySeries), 
+    path("newSeries", newSeries), 
+    path('tags', TagsListView.as_view()),
 
-
-    # FEED
-    path("foryou", forYou), # get for you posts
-
-
-    # RIGHT SECTION
-    path("symbols", SymbolView.as_view()), # get all symbols
-    path("symbols/trending", getTrendingSymbols), # get trending symbols
-    path("symbols/search", searchSymbols), # search for a symbol (used by autocomplete)
-
-    path("hashtags", HashtagView.as_view()), # get all hashtags
-    path("hashtags/trending", getTrendingHashtags), # get trending hashtags
-    path("hashtags/search", searchHashtags), # search for a hashtag (used by autocomplete)
-    path("hashtags/postCount/<int:hashtag>", getHashtagPostsCount),
-    path("symbols/postCount/<int:symbol>", getSymbolPostsCount),
 
 
     # SEARCH QUERY
     path("searchQuery", SearchQueryView.as_view()), # search query
 
-
-
-    # EXPLORE
-    path("exploreSearch", exploreSearch),
-    path("exploreSearchCount", exploreSearchCount),
-
-
-
-    # SYMBOL
-    path("symbol/<str:symbol>", getSymbolPosts),
-    path("hashtag/<str:hashtag>", getHashtagPosts),
 
 
     # NOTIFICATIONS
@@ -209,31 +142,6 @@ urlpatterns = [
 
     # REPORT
     path("report", ReportView.as_view()),
-
-
-
-    # DMs
-    path("dm/create/session", CreateDMSession.as_view()),
-    path("dm/delete/session", DeleteDMSession.as_view()),
-    path("dm/send/message", SendDirectMessage.as_view()),
-    path("dm/delete/message", DeleteDirectMessage.as_view()),
-    path("dm/get/sessions", getSessions),
-    path("dm/view/session", DirectMessageSessionView.as_view()),
-    path("dm/archive/session", archiveSession),
-    path("dm/unarchive/session", unarchiveSession),
-    path("dm/get/archives", getArchivedSessions),
-
-
-
-    # Edge Room
-    path("edgeRoom/create", CreateEdgeRoomView.as_view()),
-    path("edgeRoom/list", ListMyEdgeRoomsView.as_view()),
-    path("edgeRoom/list/admin", ListMyEdgeRoomsAdminView.as_view()),
-    path("edgeRoom/list/posts", ListRoomPostsView.as_view()),
-    path("edgeRoom/membership", getMembership),
-    path("edgeRoom/join", joinEdgeRoom),
-    path("edgeRoom/topRanking", getTopRankingRooms)
-
 
 ]
 

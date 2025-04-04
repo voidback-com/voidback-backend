@@ -1,5 +1,5 @@
 from .Account import *
-from .Post import *
+from .Writeup import *
 from .Search import *
 from .Notifications import *
 from .Platform import *

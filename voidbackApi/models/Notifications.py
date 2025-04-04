@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.transaction import on_commit
 from .Account import Account
-from .Post import Post
 
 
 

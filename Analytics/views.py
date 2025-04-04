@@ -4,7 +4,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from django.utils import timezone
 from django.contrib.gis.geoip2 import GeoIP2
-from voidbackApi.models.Post import Hashtag, Symbol
 from .serializers import EventSerializer
 from .models import Device
 import urllib.request
@@ -108,42 +107,6 @@ def logEvent(request: Request):
 
         if serializer.is_valid():
             serializer.create(event)
-
-
-            if event.get("event_type") == "view-hashtag-posts":
-                inst = Hashtag.objects.all().filter(hashtag=event.get("data")['hashtag']).first()
-
-                if inst:
-                    now = timezone.now()
-
-
-                    if inst.updated_at+timezone.timedelta(hours=24) <= now:
-                        # if the hashtag was last updated day or more ago then reset it's rank
-                        inst.rank=0
-                        inst.save()
-
-                    else:
-                        inst.rank+=1
-                        inst.save()
-
-
-
-            if event.get("event_type") == "view-symbol-posts":
-                inst = Symbol.objects.all().filter(symbol=event.get("data")['symbol']).first()
-                if inst:
-
-                    now = timezone.now()
-
-                    if inst.updated_at+timezone.timedelta(hours=24) <= now:
-                        # if the hashtag was last updated day or more ago then reset it's rank
-                        inst.rank=0
-                        inst.save()
-
-                    else:
-                        inst.rank+=1
-                        inst.save()
-
-
             return Response(status=200)
 
 

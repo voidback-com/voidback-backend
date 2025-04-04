@@ -1,11 +1,11 @@
 from django.contrib import admin
 from .models import (
     Account,
-    Post,
-    PostImage,
-    PostImpression,
-    Symbol,
-    Hashtag,
+    WriteUp,
+    WriteUpImpression,
+    WriteUpThumbnail,
+    Series,
+    Tag,
     ForYou,
     Follow,
     SearchQuery,
@@ -13,15 +13,9 @@ from .models import (
     Notification,
     PlatformMessage,
     PlatformMessageImpression,
-    DMMessage,
-    DirectMessageSession,
-    DMImage,
     AccountActiveStatus,
-    EdgeRoom,
-    EdgeRoomConfig,
-    MemberPermissions,
-    RoomMembership,
-    RoomCategory
+    Comment,
+    CommentImpression
 )
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.auth.models import Group
@@ -44,37 +38,35 @@ class GroupAdmin(BaseGroupAdmin, ModelAdmin):
 
 
 
-@admin.register(Post)
-class PostAdmin(ModelAdmin):
-    search_fields = ['id']
+@admin.register(WriteUp)
+class WriteupAdmin(ModelAdmin):
+    search_fields = ['title']
     sortable_by = ['id']
 
 
 
-@admin.register(PostImage)
-class PostImageAdmin(ModelAdmin):
+@admin.register(Series)
+class SeriesAdmin(ModelAdmin):
+    search_fields = ['name']
+    sortable_by = ['id']
+
+
+
+@admin.register(WriteUpThumbnail)
+class WriteUpThumbnailAdmin(ModelAdmin):
     pass
 
 
-@admin.register(PostImpression)
-class PostImpressionAdmin(ModelAdmin):
-    search_fields = ['post__id', "account__username"]
+@admin.register(WriteUpImpression)
+class WriteupImpressionAdmin(ModelAdmin):
+    search_fields = ['writeup__title', "account__username"]
 
 
 
-@admin.register(Symbol)
-class SymbolAdmin(ModelAdmin):
-    search_fields = ['symbol']
 
-
-@admin.register(Hashtag)
-class HashtagAdmin(ModelAdmin):
-    search_fields = ['hashtag']
-
-
-@admin.register(ForYou)
-class ForYouAdmin(ModelAdmin):
-    search_fields = ['account__username']
+@admin.register(Tag)
+class TagAdmin(ModelAdmin):
+    search_fields = ['tag']
 
 
 @admin.register(Follow)
@@ -113,54 +105,25 @@ class PlatformMessageImpressionAdmin(ModelAdmin):
 
 
 
-# DMS registered only for development
-@admin.register(DirectMessageSession)
-class DirectMessageSessionAdmin(ModelAdmin):
-    pass
-
-
-@admin.register(DMMessage)
-class DMMessageAdmin(ModelAdmin):
-    pass
-
-
-
-@admin.register(DMImage)
-class DMImageAdmin(ModelAdmin):
-    pass
-
-
-
 @admin.register(AccountActiveStatus)
 class AccountActiveStatusAdmin(ModelAdmin):
     pass
 
 
+@admin.register(CommentImpression)
+class CommentImpressionAdmin(ModelAdmin):
+    pass
 
-@admin.register(EdgeRoom)
-class EdgeRoomAdmin(ModelAdmin):
+
+@admin.register(Comment)
+class CommentAdmin(ModelAdmin):
     pass
 
 
 
-@admin.register(EdgeRoomConfig)
-class EdgeRoomConfigAdmin(ModelAdmin):
-    pass
+@admin.register(ForYou)
+class ForYouAdmin(ModelAdmin):
+    search_fields = ['tags', 'series', 'authors', 'account__username']
 
-
-
-@admin.register(MemberPermissions)
-class MemberPermissionsAdmin(ModelAdmin):
-    pass
-
-
-@admin.register(RoomMembership)
-class RoomMembershipAdmin(ModelAdmin):
-    pass
-
-
-@admin.register(RoomCategory)
-class RoomCategoryAdmin(ModelAdmin):
-    pass
 
 

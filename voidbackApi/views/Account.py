@@ -11,12 +11,38 @@ from rest_framework.views import APIView
 from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer, AccountActiveStatusSerializer
 from ..models.Account import Account, AccountActiveStatus, OneTimePassword, Follow
 import json
+from rest_framework.authentication import TokenAuthentication, authenticate
+from rest_framework.authtoken.models import Token
+
 
 
 
 class SignupView(CreateAPIView):
     serializer_class = AccountSerializer
     permission_classes = [AllowAny]
+
+
+
+class LoginView(APIView):
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({"token": token.key})
+        else:
+            return Response({"error": "Invalid credentials"}, status=401)
+
+
+
+
+class LogoutView(APIView):
+    def get(self, request: Request, format=None):
+        request.user.auth_token.delete()
+        return Response(status=200)
 
 
 
