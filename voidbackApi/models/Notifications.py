@@ -25,8 +25,11 @@ class Notification(models.Model):
 
 
 
-def newNotification(account: Account, fromName: str, navPath: str, body=None, fromAvatar=None, fromNameMessage=None, avatarVerified=False, icon="notificatiton"):
+def newNotification(toUsername: str, fromName: str, navPath: str, body=None, fromAvatar=None, fromNameMessage=None, avatarVerified=False, icon="notificatiton"):
     try:
+
+        account = Account.objects.all().filter(username=toUsername).first()
+
 
         if account.full_name == fromName and account.avatar == fromAvatar:
             return

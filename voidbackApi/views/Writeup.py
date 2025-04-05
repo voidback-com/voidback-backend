@@ -276,6 +276,7 @@ def likeWriteUp(request: Request):
                 fy.save()
 
 
+
             inst = WriteUp.objects.all().filter(pk=wid).first()
 
             ser_inst = WriteUpSerializer(inst).data
@@ -303,12 +304,15 @@ def likeWriteUp(request: Request):
 
             views = WriteUpImpression.objects.all().filter(writeup=wid).count()
 
+
+            newNotification(inst.author, request.user.full_name, f"/view/writeup/{wid}", f"{request.user.full_name} read and liked your write up.", request.user.avatar, "", avatarVerified=request.user.isVerified, icon="like")
+
             return Response(data={"impression": writeupImp.impression, "likes": likes, "views": views}, status=200)
 
         else:
             return Response(data={"error": "Failed to make an impression!"}, status=400)
 
-    except Exception:
+    except KeyboardInterrupt:
         return Response(data={"error": "Failed to make an impression!"}, status=400)
 
 
@@ -346,6 +350,14 @@ class CommentView(APIView):
 
                 dat = serializer.data
                 dat.update({"id": r.id})
+
+
+                if r.parent:
+                    newNotification(r.parent.author, request.user.full_name, f"/view/writeup/{r.writeup}", f"{request.user.full_name} replied to your comment.", request.user.avatar, "", icon="message")
+
+                else:
+                    newNotification(r.writeup.author, request.user.full_name, f"/view/writeup/{r.writeup.id}", f"{request.user.full_name} commented on your write up.", request.user.avatar, "", icon="message")
+
 
                 return Response(data=dat, status=200)
 

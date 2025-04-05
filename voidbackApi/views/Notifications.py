@@ -79,3 +79,4 @@ def deleteAllNotification(request: Request):
     except Exception:
         return Response(data={"error": "Error deleting notification!"}, status=400)
 
+

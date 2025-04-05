@@ -8,7 +8,7 @@ from django_resized import ResizedImageField
 
 
 class WriteUpThumbnail(models.Model):
-    thumbnail = ResizedImageField(size=[350, 250], upload_to="thumbnails/", force_format="WEBP", keep_meta=False)
+    thumbnail = ResizedImageField(size=[700, 500], upload_to="thumbnails/", force_format="WEBP", keep_meta=False, scale=1, quality=100)
 
     def __str__(self):
         return str(self.pk)

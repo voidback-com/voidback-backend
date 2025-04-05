@@ -8,6 +8,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from ..models.Notifications import newNotification
 from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer, AccountActiveStatusSerializer
 from ..models.Account import Account, AccountActiveStatus, OneTimePassword, Follow
 import json
@@ -253,6 +255,7 @@ def followAccount(request: Request):
                 if serializer.is_valid():
                     serializer.create(dat)
 
+                    newNotification(user_instance.username, request.user.full_name, f"/view/account/{request.user.username}", f"{request.user.full_name} follows you now.", request.user.avatar, "New Friend", avatarVerified=request.user.isVerified)
                     return Response(data=serializer.data, status=200)
 
                 return Response(data=serializer.errors, status=400)
