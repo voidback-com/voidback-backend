@@ -54,7 +54,7 @@ class PublicAccountSerializer(ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ["full_name", "username", "avatar", "bio", "site_link", "isVerified"]
+        fields = ["full_name", "username", "avatar", "bio", "site_link", "isVerified", "rank"]
 
 
 

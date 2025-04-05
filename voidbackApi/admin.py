@@ -1,4 +1,5 @@
 from django.contrib import admin
+from rest_framework.authtoken.models import Token
 from .models import (
     Account,
     WriteUp,
@@ -43,6 +44,12 @@ class WriteupAdmin(ModelAdmin):
     search_fields = ['title']
     sortable_by = ['id']
 
+
+
+@admin.register(Token)
+class TokenAdmin(ModelAdmin):
+    search_fields = ["id", "key", "user__username"]
+    sortable_by = ["id"]
 
 
 @admin.register(Series)

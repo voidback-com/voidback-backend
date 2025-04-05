@@ -169,9 +169,6 @@ def verify_otp(request: Request):
         if instance and instance.expires_at > time_now:
             if instance.otp == otp:
                 instance.verified = True
-                if not instance.account.email_verified:
-                    instance.account.email_verified = True
-                    instance.account.save()
                 instance.save()
 
                 return Response(data={"message": "Successful OTP verification."}, status=200)

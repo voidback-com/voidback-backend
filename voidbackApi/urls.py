@@ -1,4 +1,5 @@
 from django.urls import path, include
+
 from .views import (
     # ACCOUNT
     send_otp,
@@ -41,6 +42,7 @@ from .views import (
     AccountWriteUpListView,
     SeriesListView,
     LikedWriteUpListView,
+    deleteSeries,
 
 
     # SEARCH
@@ -116,6 +118,7 @@ urlpatterns = [
     path("writeup/comment/like", likeComment),
     path("writeup/comment/impressions", getCommentImpressions),
     path("writeup/list/liked", LikedWriteUpListView.as_view()),
+    path("writeup/series/delete", deleteSeries),
 
 
     # WriteUp Tags

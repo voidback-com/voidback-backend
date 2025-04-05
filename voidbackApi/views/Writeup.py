@@ -52,7 +52,7 @@ class WriteUpView(APIView):
             else:
                 return Response(data=serializer.errors, status=400)
 
-        except KeyboardInterrupt:
+        except Exception:
             return Response(data={"error": "Failed to validate write up, please try again!"},status=400)
 
 
@@ -62,7 +62,7 @@ class WriteUpView(APIView):
             instance = WriteUp.objects.all().filter(pk=request.data.get('id')).first() 
 
             if instance and instance.author.username==request.user.username:
-                instance.thumbnail.image.delete(save=False)
+                instance.thumbnail.thumbnail.delete(save=False)
                 instance.delete()
 
             return Response(status=200)
@@ -110,6 +110,23 @@ def newSeries(request: Request):
         return Response(data={"error": s.errors}, status=400)
     except Exception:
         return Response(data={"error": "Failed to validate new series!"}, status=400)
+
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def deleteSeries(request: Request):
+    try:
+        sid = request.data.get("id")
+
+        s = Series.objects.all().filter(pk=sid).first()
+        
+        if s and s.author==request.user:
+            s.delete()
+
+        return Response(status=200)
+    except Exception:
+        return Response(status=400)
 
 
 
@@ -200,7 +217,7 @@ def getWriteUp(request: Request):
 
         return Response(data=s.data, status=200)
 
-    except KeyError:
+    except Exception:
         return Response(data={"error": "Failed to fetch write up!"}, status=400)
 
 

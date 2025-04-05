@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 import pathlib
+from django_resized import ResizedImageField
 
 from django.utils.crypto import secrets
 
@@ -18,7 +19,7 @@ class Account(AbstractUser):
     username = models.CharField(max_length=25, blank=False, unique=True)
     full_name = models.CharField(max_length=128, blank=False, unique=False)
     birth_date = models.DateField(blank=True, null=True)
-    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    avatar = ResizedImageField(size=[320, 320], upload_to="avatars/", force_format="WEBP", null=True, keep_meta=False)
     bio = models.TextField(max_length=1024, blank=True)
     site_link = models.TextField(max_length=130, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

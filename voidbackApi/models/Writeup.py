@@ -1,11 +1,14 @@
 from datetime import timezone
 from django.db import models
 from .Account import Account
+from django_resized import ResizedImageField
+
+
 
 
 
 class WriteUpThumbnail(models.Model):
-    thumbnail = models.ImageField(upload_to="thumbnails/", blank=False, null=False)
+    thumbnail = ResizedImageField(size=[350, 250], upload_to="thumbnails/", force_format="WEBP", keep_meta=False)
 
     def __str__(self):
         return str(self.pk)
@@ -55,7 +58,7 @@ class WriteUp(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     rank = models.BigIntegerField(default=0, blank=True, null=True)
     edited = models.BooleanField(default=False, blank=True)
-    series = models.ForeignKey(Series, on_delete=models.CASCADE, blank=True, null=True) # series (optional)
+    series = models.ForeignKey(Series, on_delete=models.SET_NULL, blank=True, null=True) # series (optional)
 
 
     def __str__(self):
