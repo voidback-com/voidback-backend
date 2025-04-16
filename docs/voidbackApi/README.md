@@ -6,7 +6,7 @@
 
 ## Api endpoints
 
-> docs for the urls folder: <a href="./urls.md">Urls</a>
+> docs for the urls folder: <a href="./endpoints.md">Endpoints</a>
 
 
 
