@@ -78,4 +78,8 @@ path("platform/message", getPlatformMessage), # returns unseen platform messages
 path("report", ReportView.as_view()), # create a report object
 
 
+
+# SEO RELATED
+path("sitemap/writeups", getSiteMapWriteUps), # returns an array of writeups between 1 and 50k since google's limit is 50k objects in array
+
 ```
