@@ -5,7 +5,7 @@ import jwt
 from channels.generic.websocket import WebsocketConsumer
 from rest_framework.authtoken.models import Token
 from ..models.Notifications import Notification
-from ..models.Account import Account, AccountActiveStatus
+from ..models.Account import Account
 from django.conf import settings
 
 
@@ -34,14 +34,6 @@ class NotificationsCountConsumer(WebsocketConsumer):
 
 
             user = Account.objects.all().filter(pk=user_id).first()
-
-            updateStatus = AccountActiveStatus.objects.all().filter(account=user).first()
-            
-            if updateStatus:
-                updateStatus.save()
-
-            else:
-                AccountActiveStatus(account=user).save()
 
             instance = Notification.objects.all().filter(account=user.username, isRead=False).count()
 
