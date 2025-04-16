@@ -21,7 +21,6 @@ from .views import (
     searchAccounts,
     getAccountMutuals,
     getAccountRecommendations,
-    getAccountStatus,
     getFriends,
 
 
@@ -99,7 +98,6 @@ urlpatterns = [
     path("account/isFollowingBack", isFollowingBack), # is account following me
     path("account/getAccount/<str:username>", getAccountByUsername),
     path("account/getMutuals/<str:username>", getAccountMutuals),
-    path("account/status", getAccountStatus),
     path("account/friends/<str:username>", getFriends),
     path("account/writeups", AccountWriteUpListView.as_view()),
     path("account/series", SeriesListView.as_view()),
