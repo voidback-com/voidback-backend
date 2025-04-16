@@ -1,5 +1,5 @@
 from rest_framework.serializers import BooleanField, DateTimeField, IntegerField, ModelSerializer, FileField, CharField
-from ..models import Account, Follow, AccountActiveStatus
+from ..models import Account, Follow
 
 
 
@@ -70,13 +70,5 @@ class FollowSerializer(ModelSerializer):
 
 
 
-
-class AccountActiveStatusSerializer(ModelSerializer):
-    account = PublicAccountSerializer(read_only=True)
-
-    class Meta:
-        model = AccountActiveStatus
-
-        fields = "__all__"
 
 

@@ -10,8 +10,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models.Notifications import newNotification
-from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer, AccountActiveStatusSerializer
-from ..models.Account import Account, AccountActiveStatus, OneTimePassword, Follow
+from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer
+from ..models.Account import Account, OneTimePassword, Follow
 import json
 from rest_framework.authentication import TokenAuthentication, authenticate
 from rest_framework.authtoken.models import Token
@@ -622,22 +622,4 @@ def send_AnonymousOtp(request: Request):
 
 
 
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def getAccountStatus(request):
-    try:
-        acc = request.query_params.get("account")
-        instance = AccountActiveStatus.objects.all().filter(account__username=acc).first()
-
-        if instance:
-            serialized = AccountActiveStatusSerializer(instance)
-            return Response(data=serialized.data, status=200)
-
-        print("no instance")
-        return Response(data={"error": "Error couldn't retrieve the user's active status, none found."}, status=400)
-    except KeyboardInterrupt:
-        return Response(data={"error": "Error couldn't retrieve the user's active status."}, status=400)
-        
 
