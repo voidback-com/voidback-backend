@@ -9,8 +9,9 @@
 <br/>
 
 
-Account(AbstractUser)
-: This model inherts from the **AbstractUser** class to customize the default user model and add to it new fields like (**avatar**, **site_link**, etc...)
+#### Account(AbstractUser)
+
+> This model inherts from the **AbstractUser** class to customize the default user model and add to it new fields like (**avatar**, **site_link**, etc...)
 
 > you can read more about this: https://docs.djangoproject.com/en/5.1/topics/auth/customizing/
 
@@ -36,8 +37,8 @@ avatar = ResizedImageField(size=[320, 320], upload_to="avatars/", force_format="
 <br/>
 
 
-OneTimePassword(models.Model)
-: This is a very simple model that stores generated OTPs in relation to the account model instance.
+#### OneTimePassword(models.Model)
+> This is a very simple model that stores generated OTPs in relation to the account model instance.
 
 
 ```python
@@ -66,8 +67,8 @@ class OneTimePassword(models.Model):
 <br/>
 
 
-Follow(models.Model)
-: This model keeps track of who follows who (when a user clicks the follow button an instance is created where the user is the follower and the following is the account being followed.)
+#### Follow(models.Model)
+> This model keeps track of who follows who (when a user clicks the follow button an instance is created where the user is the follower and the following is the account being followed.)
 
 ```python
 
