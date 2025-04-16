@@ -64,9 +64,6 @@ from .views import (
     ReportView,
 
 
-
-    # SEO related: (sitemaps etc...)
-    getSiteMapWriteUps,
 )
 
 
