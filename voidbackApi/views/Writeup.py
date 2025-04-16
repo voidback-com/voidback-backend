@@ -595,24 +595,6 @@ class LikedWriteUpListView(ListAPIView):
 
 
 
-# returns an array of write up objects for sitemap
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def getSiteMapWriteUps(request: Request):
-    try:
-        start = request.query_params.get("start", 1)
-        end = request.query_params.get("end", 10000)
-
-        insts = WriteUp.objects.all().filter(pk__gte=start, pk__lte=end)
-
-        s = WriteUpSerializer(insts, many=True)
-
-        return Response(data=s.data, status=200)
-
-    except Exception:
-        return Response(data={"error": "Failed to fetch write ups!"}, status=400)
-
-
 
 
 
