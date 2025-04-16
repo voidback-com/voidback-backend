@@ -14,7 +14,6 @@ from .models import (
     Notification,
     PlatformMessage,
     PlatformMessageImpression,
-    AccountActiveStatus,
     Comment,
     CommentImpression
 )
@@ -112,9 +111,6 @@ class PlatformMessageImpressionAdmin(ModelAdmin):
 
 
 
-@admin.register(AccountActiveStatus)
-class AccountActiveStatusAdmin(ModelAdmin):
-    pass
 
 
 @admin.register(CommentImpression)
