@@ -69,13 +69,3 @@ class Follow(models.Model):
 
 
 
-class AccountActiveStatus(models.Model):
-    account = models.OneToOneField(Account, on_delete=models.CASCADE)
-    last_active = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.account.username
-
-
-
-
