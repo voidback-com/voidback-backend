@@ -18,7 +18,6 @@ class Account(AbstractUser):
     email = models.CharField(max_length=320, blank=False, unique=True)
     username = models.CharField(max_length=25, blank=False, unique=True)
     full_name = models.CharField(max_length=128, blank=False, unique=False)
-    birth_date = models.DateField(blank=True, null=True)
     avatar = ResizedImageField(size=[320, 320], upload_to="avatars/", force_format="WEBP", null=True, keep_meta=False)
     bio = models.TextField(max_length=1024, blank=True)
     site_link = models.TextField(max_length=130, blank=True)

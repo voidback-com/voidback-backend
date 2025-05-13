@@ -6,15 +6,13 @@ from ..models import Account, Follow
 class AccountSerializer(ModelSerializer):
     password = CharField(write_only=True)
     rank = IntegerField(read_only=True)
-    birth_date = DateTimeField(write_only=True)
     is_staff = BooleanField(read_only=True)
     email_verified = BooleanField(read_only=True)
 
     class Meta:
         model = Account
 
-        fields = ["email", "full_name", "username", "avatar", "bio", "site_link", "rank", "birth_date", "password", "is_staff", "isVerified", "email_verified", "id"]
-        write_only_fields = ['birth_date']
+        fields = ["email", "full_name", "username", "avatar", "bio", "site_link", "rank", "password", "is_staff", "isVerified", "email_verified", "id"]
 
 
     def create(self, validated_data):
