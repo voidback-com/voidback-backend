@@ -8,7 +8,7 @@ from django_resized import ResizedImageField
 
 
 class WriteUpThumbnail(models.Model):
-    thumbnail = ResizedImageField(size=[700, 500], upload_to="thumbnails/", force_format="WEBP", keep_meta=False, scale=1, quality=100)
+    thumbnail = ResizedImageField(size=[1600, 900], upload_to="thumbnails/", force_format="WEBP", keep_meta=False, scale=1, quality=100)
 
     def __str__(self):
         return str(self.pk)
@@ -50,13 +50,13 @@ class Series(models.Model):
 
 class WriteUp(models.Model):
     title = models.TextField()
-    content = models.JSONField()
+    description = models.TextField(blank=True, null=True)
+    content = models.TextField()
     thumbnail = models.ForeignKey(WriteUpThumbnail, blank=True, on_delete=models.CASCADE, null=True)
     tags = models.ManyToManyField(Tag, related_name="tags", blank=True)
     author = models.ForeignKey(Account, on_delete=models.CASCADE, to_field="username")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    rank = models.BigIntegerField(default=0, blank=True, null=True)
     edited = models.BooleanField(default=False, blank=True)
     series = models.ForeignKey(Series, on_delete=models.SET_NULL, blank=True, null=True) # series (optional)
 
@@ -67,7 +67,7 @@ class WriteUp(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["author", "title", "series", "edited", "rank", 'created_at', "updated_at"])
+            models.Index(fields=["author", "title", "series", "edited", 'created_at', "updated_at"])
         ]
 
 

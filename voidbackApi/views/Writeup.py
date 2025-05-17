@@ -149,12 +149,12 @@ class TagsListView(ListAPIView):
 
 
 class WriteUpListView(ListAPIView):     
-    queryset = WriteUp.objects.all().order_by("-rank", "-created_at", '-updated_at')     
+    queryset = WriteUp.objects.all().order_by("-created_at", '-updated_at')     
     serializer_class = WriteUpSerializer     
     permission_classes = [AllowAny]     
     pagination_class = DefaultSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ["title", 'tags__tag', 'author__username', "series__name", "author__full_name"]
+    search_fields = ["title", "content", "description", 'tags__tag', 'author__username', "series__name", "author__full_name"]
 
 
     # return's personalized write ups if the user is authenticated else: the most recent trending write ups
@@ -168,7 +168,7 @@ class WriteUpListView(ListAPIView):
                 return queryset
 
 
-            queryset = WriteUp.objects.all().order_by("-rank", "-created_at", '-updated_at')     
+            queryset = WriteUp.objects.all().order_by("-created_at", '-updated_at')     
 
             if self.request.auth:
                 fy = ForYou.objects.all().filter(account=self.request.user).first()
@@ -178,7 +178,7 @@ class WriteUpListView(ListAPIView):
                         Q(tags__tag__in=fy.tags) |
                         Q(series__name__in=fy.series) |
                         Q(author__username__in=fy.authors)
-                    ).order_by("-rank", "-created_at", "-updated_at")
+                    ).order_by("-created_at", "-updated_at")
 
                     return queryset
 
@@ -197,6 +197,7 @@ def getWriteUp(request: Request):
     try:
         wid = request.query_params.get("id", None)
 
+
         inst = WriteUp.objects.all().filter(pk=wid).first()
 
         if not inst:
@@ -208,9 +209,6 @@ def getWriteUp(request: Request):
                 if not imp:
                     imp = WriteUpImpression(account=request.user, impression=0, writeup=inst, hash=f"{request.user.id}:{inst.id}")
                     imp.save()
-
-                    inst.rank+=1
-                    inst.save()
 
 
         s = WriteUpSerializer(inst)
@@ -256,7 +254,7 @@ def likeWriteUp(request: Request):
     try:
         wid = request.query_params.get("writeup") # writeup id
 
-        writeupImp = WriteUpImpression.objects.all().filter(writeup=wid, account=request.user).first()
+        writeupImp = WriteUpImpression.objects.all().filter(writeup=int(wid), account=request.user).first()
 
         if writeupImp:
             if writeupImp.impression == 0:
@@ -312,7 +310,7 @@ def likeWriteUp(request: Request):
         else:
             return Response(data={"error": "Failed to make an impression!"}, status=400)
 
-    except KeyboardInterrupt:
+    except Exception:
         return Response(data={"error": "Failed to make an impression!"}, status=400)
 
 
@@ -348,9 +346,6 @@ class CommentView(APIView):
 
                 r = serializer.create(data)
 
-                dat = serializer.data
-                dat.update({"id": r.id})
-
 
                 if r.parent:
                     newNotification(r.parent.author, request.user.full_name, f"/view/writeup/{r.writeup}", f"{request.user.full_name} replied to your comment.", request.user.avatar, "", icon="message")
@@ -359,7 +354,7 @@ class CommentView(APIView):
                     newNotification(r.writeup.author, request.user.full_name, f"/view/writeup/{r.writeup.id}", f"{request.user.full_name} commented on your write up.", request.user.avatar, "", icon="message")
 
 
-                return Response(data=dat, status=200)
+                return Response(data=CommentSerializer(r).data, status=200)
 
             else:
                 return Response(data=serializer.errors, status=400)
@@ -431,12 +426,15 @@ class CommentListView(ListAPIView):
 @permission_classes([AllowAny])
 def commentsCount(request: Request):
     try:
+        wid = request.query_params.get("writeup", None)
+        parent = request.query_params.get("parent", None)
+
         
-        qcount = Comment.objects.all().filter(writeup=request.query_params.get("writeup", None), parent=request.query_params.get("parent", None)).count() 
+        qcount = Comment.objects.all().filter(writeup=wid, parent=parent).count() 
 
         return Response(data={"count": qcount}, status=200)
 
-    except KeyboardInterrupt:
+    except Exception:
         return Response(data={"error": "Failed to fetch comments count, please try again!"}, status=400)
 
 
