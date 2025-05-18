@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from ..models.Notifications import Notification
 from channels.db import database_sync_to_async
 
+
 @database_sync_to_async
 def get_user(token):
     try:
@@ -55,7 +56,6 @@ class NotificationsCountConsumer(AsyncWebsocketConsumer):
 
 
             await self.send(text_data=json.dumps({
-                    "type": "notifications.count",  # underscores!
                     "count": unread_notifications
                 }))
 
@@ -70,7 +70,6 @@ class NotificationsCountConsumer(AsyncWebsocketConsumer):
 
 
             await self.send(text_data=json.dumps({
-                    "type": "notifications.count",  # underscores!
                     "count": unread_notifications
                 }))
         except Exception:

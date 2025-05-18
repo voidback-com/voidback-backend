@@ -256,52 +256,58 @@ def likeWriteUp(request: Request):
 
         writeupImp = WriteUpImpression.objects.all().filter(writeup=int(wid), account=request.user).first()
 
-        if writeupImp:
-            if writeupImp.impression == 0:
-                writeupImp.impression = 1
-                writeupImp.save()
-
-            else:
-                writeupImp.impression = 0
-                writeupImp.save()
+        if not writeupImp:
+            w = WriteUp.objects.all().filter(pk=wid).first()
+            writeupImp = WriteUpImpression.objects.create(writeup=w, account=request.user, impression=0, hash=f"{request.user.username}:{wid}")
 
 
-            fy = ForYou.objects.all().filter(account=request.user).first()
+        if writeupImp.impression == 0:
+            writeupImp.impression = 1
+            writeupImp.save()
 
-            if not fy:
-                fy = ForYou(account=request.user)
-
-                fy.save()
-
-
-
-            inst = WriteUp.objects.all().filter(pk=wid).first()
-
-            ser_inst = WriteUpSerializer(inst).data
+        else:
+            writeupImp.impression = 0
+            writeupImp.save()
 
 
-            if ser_inst['tags']:
-                for t in ser_inst['tags']:
-                    if t['tag'] not in fy.tags:
-                        fy.tags.append(t['tag'])
+        fy = ForYou.objects.all().filter(account=request.user).first()
 
-
-            if ser_inst['series']:
-                if ser_inst['series']['name'] not in fy.series:
-                    fy.series.append(ser_inst['series']['name'])
-
-
-            if ser_inst['author']['username'] not in fy.authors:
-                fy.authors.append(ser_inst['author']['username'])
-
+        if not fy:
+            fy = ForYou(account=request.user)
 
             fy.save()
 
 
-            likes = WriteUpImpression.objects.all().filter(writeup=wid, impression=1).count()
 
-            views = WriteUpImpression.objects.all().filter(writeup=wid).count()
+        inst = WriteUp.objects.all().filter(pk=wid).first()
 
+        ser_inst = WriteUpSerializer(inst).data
+
+
+        if ser_inst['tags']:
+            for t in ser_inst['tags']:
+                if t['tag'] not in fy.tags:
+                    fy.tags.append(t['tag'])
+
+
+        if ser_inst['series']:
+            if ser_inst['series']['name'] not in fy.series:
+                fy.series.append(ser_inst['series']['name'])
+
+
+        if ser_inst['author']['username'] not in fy.authors:
+            fy.authors.append(ser_inst['author']['username'])
+
+
+        fy.save()
+
+
+        likes = WriteUpImpression.objects.all().filter(writeup=wid, impression=1).count()
+
+        views = WriteUpImpression.objects.all().filter(writeup=wid).count()
+
+
+        if inst.author!=request.user:
 
             create_notification(inst.author, {
                 "from": PublicAccountSerializer(request.user).data,
@@ -309,15 +315,12 @@ def likeWriteUp(request: Request):
                 "objectType": "writeup",
                 "object": WriteUpSerializer(inst).data,
                 "icon": "heart",
-                "link": f"/view/writeup/${wid}"
+                "link": f"/view/writeup/{wid}"
             })
 
 
 
-            return Response(data={"impression": writeupImp.impression, "likes": likes, "views": views}, status=200)
-
-        else:
-            return Response(data={"error": "Failed to make an impression!"}, status=400)
+        return Response(data={"impression": writeupImp.impression, "likes": likes, "views": views}, status=200)
 
     except Exception:
         return Response(data={"error": "Failed to make an impression!"}, status=400)
@@ -356,25 +359,25 @@ class CommentView(APIView):
                 r = serializer.create(data)
 
 
-                if r.parent:
+                if r.parent and r.parent.author != request.user:
                     create_notification(r.parent.author, {
                         "from": PublicAccountSerializer(request.user).data,
                         "title": f"@{request.user.username} replied to your comment.",
                         "objectType": "comment",
                         "object": CommentSerializer(r).data,
                         "icon": "chat",
-                        "link": f"/view/writeup/${r.writeup.id}"
+                        "link": f"/view/writeup/{r.writeup.id}"
                     })
 
 
-                else:
-                    create_notification(r.parent.author, {
+                elif r.writeup.author != request.user:
+                    create_notification(r.writeup.author, {
                         "from": PublicAccountSerializer(request.user).data,
                         "title": f"@{request.user.username} commented on your write up.",
                         "objectType": "comment",
                         "object": CommentSerializer(r).data,
                         "icon": "chat",
-                        "link": f"/view/writeup/${r.writeup.id}"
+                        "link": f"/view/writeup/{r.writeup.id}"
                     })
 
 

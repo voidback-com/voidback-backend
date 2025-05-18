@@ -260,7 +260,7 @@ def followAccount(request: Request):
                         "objectType": None,
                         "object": None,
                         "icon": "user",
-                        "link": f"/view/account/${request.user.username}"
+                        "link": f"/view/account/{request.user.username}"
                     })
 
                     return Response(data=serializer.data, status=200)
@@ -296,7 +296,7 @@ def unfollowAccount(request: Request):
                     "objectType": None,
                     "object": None,
                     "icon": "minus-user",
-                    "link": f"/view/account/${request.user.username}"
+                    "link": f"/view/account/{request.user.username}"
                 })
 
 

@@ -16,7 +16,7 @@ def getNotifications(request: Request):
         skip = request.query_params.get("skip")
         limit = request.query_params.get("limit")
 
-        instance = Notification.objects.all().filter(account=request.user.username).order_by("-created_at")[int(skip):int(limit)]
+        instance = Notification.objects.all().filter(account=request.user).order_by("-created_at")[int(skip):int(limit)]
 
         serializer = NotificationSerializer(instance, many=True)
 
