@@ -1,102 +1,78 @@
 import json
+from channels.exceptions import StopConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
 from ..models.Notifications import Notification
 from channels.db import database_sync_to_async
 
-
-
 @database_sync_to_async
 def get_user(token):
     try:
-        tok = Token.objects.all().filter(key=token).first()
-
-        if tok.user:
+        tok = Token.objects.filter(key=token).first()
+        if tok and tok.user:
             return tok.user
     except Exception:
         return None
 
 
-
 @database_sync_to_async
 def get_unread(user):
     try:
-        return Notification.objects.all().filter(account=user.username, isRead=False).count()
+        return Notification.objects.filter(account=user, isRead=False).count()
     except Exception:
-        pass
-
+        return 0
 
 
 class NotificationsCountConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         subprotocols = self.scope.get("subprotocols", [])
-        token = None
+        token = subprotocols[0] if subprotocols else None
 
-        if subprotocols:
-            token = subprotocols[0]
-
-        if token:
-            self.user = await get_user(token)
-
-            if self.user and self.user.is_authenticated:
-
-                self.room_name = f"notifications-{self.user.id}"
-                self.room_group_name = "notifications"
-
-                # join the room specific to user
-                await self.channel_layer.group_add(
-                    self.room_group_name,
-                    self.channel_name
-                )
-
-                await self.channel_layer.group_add(
-                    self.room_name,
-                    self.channel_name
-                )
-
-                await self.accept() # user connected to the room
-
-
-                # send initial unread notifications after user connection
-                unread_notifications = await get_unread(self.user)
-
-                await self.send(text_data=json.dumps({
-                    "count": unread_notifications
-                }))
-
-            else:
-                await self.close()
-
-        else:
+        if not token:
             await self.close()
 
+        self.user = await get_user(token)
+
+        if not self.user or not self.user.is_authenticated:
+            await self.close()
+
+        await self.accept(token)
+
+        await self.send_unread_count()
 
 
 
     async def disconnect(self, close_code):
-        if hasattr(self, "room_group_name"):
-            await self.channel_layer.group_discard(
-                self.room_group_name,
-                self.channel_name
-            )
-
-        if hasattr(self, 'room_name'):
-            await self.channel_layer.group_discard(
-                self.room_name,
-                self.channel_name
-            )
-
-        # raise StopConsumer()
+        raise StopConsumer()
 
 
-    
-    # handles sending the unread notifications count to the user
-    async def send_unread(self, event):
-        count = event['count']
+    async def send_unread_count(self):
+        try:
 
-        await self.send(text_data=json.dumps({
-            "count": count
-        }));
+            unread_notifications = await get_unread(self.user)
 
+
+
+            await self.send(text_data=json.dumps({
+                    "type": "notifications.count",  # underscores!
+                    "count": unread_notifications
+                }))
+
+
+        except Exception:
+            self.close()
+
+
+    async def receive(self, text_data=None):
+        try:
+            unread_notifications = await get_unread(self.user)
+
+
+            await self.send(text_data=json.dumps({
+                    "type": "notifications.count",  # underscores!
+                    "count": unread_notifications
+                }))
+        except Exception:
+            self.close()
 

@@ -1,3 +1,4 @@
+import json
 from channels.layers import get_channel_layer
 import asyncio
 from ..models.Notifications import Notification
@@ -14,7 +15,8 @@ def create_notification(user, content: dict):
     asyncio.run(channel_layer.group_send(
         f"notifications-{user.id}", # room name
         {
-            'count': unread,
+            "type": "notifications.count",
+            "count": unread
         }
     ))
 

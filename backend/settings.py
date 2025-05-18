@@ -130,16 +130,6 @@ TEMPLATES = [
 ASGI_APPLICATION = "backend.asgi.application"
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(env_config("REDIS_HOST", cast=str), env_config("REDIS_PORT", cast=int))],
-        }
-    }
-}
-
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -207,7 +197,7 @@ STATIC_URL = "/static/"
 
 CORS_ALLOWED_ORIGINS = env_config("ALLOWED_ORIGINS", cast=str, default=" ").split()
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = "*"
+CORS_ALLOW_ALL_HEADERS = True
 
 
 AUTH_USER_MODEL = "voidbackApi.Account"
