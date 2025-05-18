@@ -7,10 +7,10 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Analytics.models import Event
+from voidbackApi.tasks.notifications import create_notification
 from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Writeup import *
 from ..models.Writeup import *
-from ..models.Notifications import newNotification
 import json
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -303,7 +303,16 @@ def likeWriteUp(request: Request):
             views = WriteUpImpression.objects.all().filter(writeup=wid).count()
 
 
-            newNotification(inst.author, request.user.full_name, f"/view/writeup/{wid}", f"{request.user.full_name} read and liked your write up.", request.user.avatar, "", avatarVerified=request.user.isVerified, icon="like")
+            create_notification(inst.author, {
+                "from": PublicAccountSerializer(request.user).data,
+                "title": f"@{request.user.username} read and liked your write-up.",
+                "objectType": "writeup",
+                "object": WriteUpSerializer(inst).data,
+                "icon": "heart",
+                "link": f"/view/writeup/${wid}"
+            })
+
+
 
             return Response(data={"impression": writeupImp.impression, "likes": likes, "views": views}, status=200)
 
@@ -348,10 +357,25 @@ class CommentView(APIView):
 
 
                 if r.parent:
-                    newNotification(r.parent.author, request.user.full_name, f"/view/writeup/{r.writeup}", f"{request.user.full_name} replied to your comment.", request.user.avatar, "", icon="message")
+                    create_notification(r.parent.author, {
+                        "from": PublicAccountSerializer(request.user).data,
+                        "title": f"@{request.user.username} replied to your comment.",
+                        "objectType": "comment",
+                        "object": CommentSerializer(r).data,
+                        "icon": "chat",
+                        "link": f"/view/writeup/${r.writeup.id}"
+                    })
+
 
                 else:
-                    newNotification(r.writeup.author, request.user.full_name, f"/view/writeup/{r.writeup.id}", f"{request.user.full_name} commented on your write up.", request.user.avatar, "", icon="message")
+                    create_notification(r.parent.author, {
+                        "from": PublicAccountSerializer(request.user).data,
+                        "title": f"@{request.user.username} commented on your write up.",
+                        "objectType": "comment",
+                        "object": CommentSerializer(r).data,
+                        "icon": "chat",
+                        "link": f"/view/writeup/${r.writeup.id}"
+                    })
 
 
                 return Response(data=CommentSerializer(r).data, status=200)

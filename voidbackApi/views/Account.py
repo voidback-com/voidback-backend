@@ -8,8 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from ..models.Notifications import newNotification
+from voidbackApi.tasks.notifications import create_notification
 from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer
 from ..models.Account import Account, OneTimePassword, Follow
 import json
@@ -255,7 +254,15 @@ def followAccount(request: Request):
                 if serializer.is_valid():
                     serializer.create(dat)
 
-                    newNotification(user_instance.username, request.user.full_name, f"/view/account/{request.user.username}", f"{request.user.full_name} follows you now.", request.user.avatar, "New Friend", avatarVerified=request.user.isVerified)
+                    create_notification(user_instance, {
+                        "from": PublicAccountSerializer(request.user).data,
+                        "title": f"@{request.user.username} followed you",
+                        "objectType": None,
+                        "object": None,
+                        "icon": "user",
+                        "link": f"/view/account/${request.user.username}"
+                    })
+
                     return Response(data=serializer.data, status=200)
 
                 return Response(data=serializer.errors, status=400)
@@ -282,6 +289,17 @@ def unfollowAccount(request: Request):
 
 
             if user_instance:
+
+                create_notification(user_instance.following, {
+                    "from": PublicAccountSerializer(request.user).data,
+                    "title": f"@{request.user.username} unfollowed you",
+                    "objectType": None,
+                    "object": None,
+                    "icon": "minus-user",
+                    "link": f"/view/account/${request.user.username}"
+                })
+
+
                 user_instance.following.rank-=1
                 user_instance.following.save()
                 user_instance.delete()

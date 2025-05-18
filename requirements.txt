@@ -25,3 +25,4 @@ geoip2
 django-user-agents
 transformers
 tf-keras
+channels_redis
