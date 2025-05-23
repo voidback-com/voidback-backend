@@ -450,17 +450,41 @@ def getAccountByUsername(request: Request, username: str):
 # get all the accounts that this username follows
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def getUsernameFollowingCount(request: Request, username: str):
+def getUsernameFollowsCount(request: Request, username: str):
     try:
 
         if username:
             user_instance = Follow.objects.all().filter(follower=username).count()
 
             if user_instance:
-                return Response(data={"following": user_instance}, status=200)
+                return Response(data={"follows": user_instance}, status=200)
 
-            return Response(data={"following": 0}, status=200)
-        return Response(data={"following": 0}, status=200)
+            return Response(data={"follows": 0}, status=200)
+        return Response(data={"follows": 0}, status=200)
+
+    except Exception:
+        return Response(data={"error": "failed!"}, status=400)
+ 
+
+
+
+
+
+
+# get all the accounts that follow this username
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def getFollowingUsernameCount(request: Request, username: str):
+    try:
+
+        if username:
+            user_instance = Follow.objects.all().filter(following=username).count()
+
+            if user_instance:
+                return Response(data={"followers": user_instance}, status=200)
+
+            return Response(data={"followers": 0}, status=200)
+        return Response(data={"followers": 0}, status=200)
 
     except Exception:
         return Response(data={"error": "failed to fetch followers."}, status=400)

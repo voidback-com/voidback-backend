@@ -16,7 +16,8 @@ from .views import (
     isFollowingBack,
     getAccountByUsername,
     getUsernameFollowing,
-    getUsernameFollowingCount,
+    getFollowingUsernameCount,
+    getUsernameFollowsCount,
     getUsernameFollowers,
     searchAccounts,
     getAccountMutuals,
@@ -89,7 +90,8 @@ urlpatterns = [
 
     path("account/search", searchAccounts), # search for an account (used by autocomplete)
     path("account/following/<str:username>", getUsernameFollowing), # get all the accounts this username follows,
-    path("account/following/count/<str:username>", getUsernameFollowingCount), # get count of all the accounts that follow this username
+    path("account/followingUsername/count/<str:username>", getFollowingUsernameCount), # get count of all the accounts that follow this username
+    path("account/usernameFollows/count/<str:username>", getUsernameFollowsCount), # get count of all the accounts that follow this username
 
     path("account/followers/<str:username>", getUsernameFollowers), # get all the accounts that follow this username
 

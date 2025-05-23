@@ -254,7 +254,7 @@ def likeWriteUp(request: Request):
     try:
         wid = request.query_params.get("writeup") # writeup id
 
-        writeupImp = WriteUpImpression.objects.all().filter(writeup=int(wid), account=request.user).first()
+        writeupImp = WriteUpImpression.objects.all().filter(writeup=wid, account=request.user).first()
 
         if not writeupImp:
             w = WriteUp.objects.all().filter(pk=wid).first()
@@ -307,7 +307,7 @@ def likeWriteUp(request: Request):
         views = WriteUpImpression.objects.all().filter(writeup=wid).count()
 
 
-        if inst.author!=request.user:
+        if inst.author!=request.user and writeupImp.impression==1:
 
             create_notification(inst.author, {
                 "from": PublicAccountSerializer(request.user).data,
@@ -537,6 +537,7 @@ def getCommentImpressions(request: Request):
 
 
 
+# returns write ups & series by this author
 class AccountWriteUpListView(ListAPIView):     
     queryset = []
     serializer_class = WriteUpSerializer     
@@ -544,7 +545,6 @@ class AccountWriteUpListView(ListAPIView):
     pagination_class = DefaultSetPagination
 
 
-    # return's personalized write ups if the user is authenticated else: the most recent trending write ups
     def get_queryset(self):
         try:
             series = self.request.query_params.get("series") # series name
@@ -592,6 +592,7 @@ class SeriesListView(ListAPIView):
 
 
 
+# returns write ups liked by the given username
 class LikedWriteUpListView(ListAPIView):     
     queryset = []
     serializer_class = WriteUpSerializer     
@@ -599,7 +600,6 @@ class LikedWriteUpListView(ListAPIView):
     pagination_class = DefaultSetPagination
 
 
-    # return's personalized write ups if the user is authenticated else: the most recent trending write ups
     def get_queryset(self):
         try:
             account = self.request.query_params.get("account", None) # account username
