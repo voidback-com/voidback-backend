@@ -1,13 +1,15 @@
 from random import randint
+from uuid import uuid4
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.utils import timezone
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from voidbackApi.pagination.defaultPagination import DefaultSetPagination
 from voidbackApi.tasks.notifications import create_notification
 from ..serializers.Account import AccountSerializer, PublicAccountSerializer, FollowSerializer
 from ..models.Account import Account, OneTimePassword, Follow
@@ -63,17 +65,13 @@ class AccountView(APIView):
 
     def delete(self, request: Request):
         try:
-            otp = request.data.get("otp")
-
             time_now = timezone.now()
 
             instance = OneTimePassword.objects.all().filter(account=request.user.username).last()
 
 
             if instance and instance.expires_at > time_now:
-                if instance.otp == otp:
-                    instance.verified = True
-                    instance.save()
+                if instance.verified:
 
                     inst = Account.objects.all().filter(pk=request.user.id).first()
                     if inst.avatar:
@@ -82,10 +80,11 @@ class AccountView(APIView):
 
                     return Response(status=200)
 
-            return Response(status=404)
 
+            return Response(data={"error": "otp is unverified, please click the link!"}, status=400)
         except Exception:
-            return Response(status=400)
+            return Response(data={"error": "otp is unverified, please click the link!"}, status=400)
+
 
 
 
@@ -93,12 +92,31 @@ class AccountView(APIView):
         try:
             data = request.data.get("data", None)
 
+
             if data:
                 data = json.loads(data)
+
+                time_now = timezone.now()
+
+                if "email" in data:
+                    last_otp = OneTimePassword.objects.all().filter(account=request.user).last()
+
+                    if last_otp and last_otp.expires_at > time_now:
+                        if not last_otp.verified:
+                            return Response(data={"error": "otp is unverified, please click the link!"}, status=400)
+
+                    elif last_otp:
+                        return Response(data={"error": "otp is expired!"}, status=400)
+
+                    else:
+                        return Response(data={"error": "otp is unverified, please click the link!"}, status=400)
+
+
+
             
-            else:
-                data = dict()
-                data['avatar'] = request.FILES.get("avatar", None)
+            if request.FILES.get("avatar", False):
+                data['avatar'] = request.FILES.get("avatar")
+
 
             instance = Account.objects.all().filter(pk=request.user.id).first()
 
@@ -113,6 +131,7 @@ class AccountView(APIView):
 
         except Exception:
             return Response(status=400)
+            return Response(data={"error": "otp is unverified, please click the link!"}, status=400)
 
 
 
@@ -127,23 +146,24 @@ def send_otp(request: Request):
 
 
         if last_otp and last_otp.expires_at >= time_now:
-            return Response(data={"error": "Can't request a new otp until the previous one expires.  (otp lifetime is 10 minutes)"}, status=400)
+            return Response(data={"error": "Can't request a new otp until the previous one expires.  (otp lifetime is 10 minutes)"}, status=401)
 
 
         expires_at = timezone.now() + timezone.timedelta(minutes=10)
 
-        instance = OneTimePassword(account=request.user, expires_at=expires_at, otp=str(randint(1000, 1000000)))
+        instance = OneTimePassword(account=request.user, expires_at=expires_at, otp=str(uuid4())[0:7])
 
         instance.save()
 
         html_template = get_template("email/otp.html")
 
-        msg = EmailMultiAlternatives("Voidback OTP", "", "noreply@voidback.com", to=[request.user.email])
+        msg = EmailMultiAlternatives("Voidback OTP Link", "", "noreply@voidback.com", to=[request.user.email])
 
         msg.attach_alternative(html_template.render({
             "full_name": request.user.full_name,
-            "otp": instance.otp
+            "otp": f"https://voidback.com/otp/{instance.otp}",
         }), "text/html")
+
 
         msg.send()
 
@@ -422,7 +442,7 @@ def getFriends(request: Request, username: str):
 
         return Response(data=[], status=200)
 
-    except KeyboardInterrupt:
+    except Exception:
         return Response(data={"error": "failed to fetch friends."}, status=400)
 
      
@@ -586,7 +606,6 @@ def getAccountRecommendations(request: Request):
 @permission_classes([AllowAny])
 def resetPassword(request):
     try:
-        otp = request.data.get("otp")
         password = request.data.get("password")
         email = request.data.get("email")
 
@@ -600,15 +619,12 @@ def resetPassword(request):
         instance = OneTimePassword.objects.all().filter(account=account).last()
 
 
-        if instance and instance.expires_at > time_now:
-            if instance.otp == otp and instance.account == account:
-                instance.verified = True
-                instance.save()
+        if instance and instance.expires_at > time_now and instance.verified:
 
-                account.set_password(password)
-                account.save()
+            account.set_password(password)
+            account.save()
 
-                return Response({"error": None}, status=200)
+            return Response({"error": None}, status=200)
 
         return Response({"error": "Error the otp is either expired or invalid."}, status=400)
 
@@ -641,7 +657,7 @@ def send_AnonymousOtp(request: Request):
 
         expires_at = timezone.now() + timezone.timedelta(minutes=10)
 
-        instance = OneTimePassword(account=account, expires_at=expires_at, otp=str(randint(1000, 1000000)))
+        instance = OneTimePassword(account=account, expires_at=expires_at, otp=str(uuid4())[0:7])
 
         instance.save()
 
@@ -651,7 +667,7 @@ def send_AnonymousOtp(request: Request):
 
         msg.attach_alternative(html_template.render({
             "full_name": account.full_name,
-            "otp": instance.otp
+            "otp": f"https://voidback.com/otp/{instance.otp}",
         }), "text/html")
 
         msg.send()
@@ -664,4 +680,10 @@ def send_AnonymousOtp(request: Request):
 
 
 
+
+class AccountListView(ListAPIView):     
+    queryset = Account.objects.all().order_by("-created_at", '-updated_at')     
+    serializer_class = PublicAccountSerializer
+    permission_classes = [AllowAny]     
+    pagination_class = DefaultSetPagination
 

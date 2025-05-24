@@ -23,6 +23,7 @@ from .views import (
     getAccountMutuals,
     getAccountRecommendations,
     getFriends,
+    AccountListView,
 
 
     # WRITEUP
@@ -87,6 +88,7 @@ urlpatterns = [
     path("account/recommendations", getAccountRecommendations),
     path("account/anonymous_sendOtp", send_AnonymousOtp),
 
+    path("account/list", AccountListView.as_view()), # list all accounts
 
     path("account/search", searchAccounts), # search for an account (used by autocomplete)
     path("account/following/<str:username>", getUsernameFollowing), # get all the accounts this username follows,
