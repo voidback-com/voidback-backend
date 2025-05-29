@@ -219,3 +219,9 @@ GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
 
 UNFOLD = unfold.UNFOLD
 
+
+
+
+# make sure it returns https in rest requests
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True 
