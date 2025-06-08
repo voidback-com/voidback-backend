@@ -6,7 +6,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from Analytics.models import Event
 from voidbackApi.tasks.notifications import create_notification
 from ..pagination.defaultPagination import DefaultSetPagination
 from ..serializers.Writeup import *
@@ -170,7 +169,7 @@ class WriteUpListView(ListAPIView):
 
             queryset = WriteUp.objects.all().order_by("-created_at", '-updated_at')     
 
-            if self.request.auth:
+            if self.request.user.is_authenticated:
                 fy = ForYou.objects.all().filter(account=self.request.user).first()
 
                 if fy:
@@ -204,7 +203,7 @@ def getWriteUp(request: Request):
             return Response(data={"error": "Not Found!"}, status=404)
         else:
             # create neutral impression if none exist
-            if request.auth:
+            if request.user.is_authenticated:
                 imp = WriteUpImpression.objects.all().filter(writeup=inst, account=request.user).first()
                 if not imp:
                     imp = WriteUpImpression(account=request.user, impression=0, writeup=inst, hash=f"{request.user.id}:{inst.id}")
@@ -230,7 +229,7 @@ def getImpressions(request: Request):
 
         writeupImp = None
 
-        if request.auth:
+        if request.user.is_authenticated:
             writeupImp = WriteUpImpression.objects.all().filter(writeup=wid, account=request.user).first()
             if writeupImp:
                 writeupImp = writeupImp.impression
@@ -519,7 +518,7 @@ def getCommentImpressions(request: Request):
 
         commentImp = None
 
-        if request.auth:
+        if request.user.is_authenticated:
             commentImp = CommentImpression.objects.all().filter(comment=cid, account=request.user).first()
             if commentImp:
                 commentImp = commentImp.impression

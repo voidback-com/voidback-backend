@@ -23,6 +23,5 @@ from decouple import config as env_config
 urlpatterns = [
     path(f"{env_config('ADMIN_PATH', cast=str, default='admin/')}", admin.site.urls),
     path("api/", include("voidbackApi.urls")),
-    path("api/analytics/", include("Analytics.urls"))
 ]
 

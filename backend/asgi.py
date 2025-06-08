@@ -20,13 +20,9 @@ django_asgi_app = get_asgi_application()
 
 
 from voidbackApi.routing import websocket_urlpatterns
-from Analytics.routing import websocket_analytics_urlpatterns
-
 
 
 patterns = websocket_urlpatterns
-
-patterns+=websocket_analytics_urlpatterns
 
 
 application = ProtocolTypeRouter({

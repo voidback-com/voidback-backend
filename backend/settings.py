@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "voidbackApi",
     "django_user_agents",
-    "Analytics",
 
 
 ]
