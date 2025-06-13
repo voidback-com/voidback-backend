@@ -1,0 +1,85 @@
+##[pylyzer] failed /users/mohamed/desktop/projects/orgs/voidback/voidback/voidback-backend/voidbackapi/models/writeup.py 1749367842 4868
+.___v_desugar_1: Never
+.timezone: Never
+.models = pyimport "models"
+
+.___v_desugar_2 = pyimport "account"
+.account = pyimport "account"
+.Account: Never
+.___v_desugar_3 = pyimport "django_resized"
+.django_resized = pyimport "django_resized"
+.ResizedImageField: Never
+.WriteUpThumbnail: ClassType
+.WriteUpThumbnail <: Never
+.WriteUpThumbnail.thumbnail: Never
+.WriteUpThumbnail.__str__: (self: writeup.WriteUpThumbnail) -> Str
+
+.Tag: ClassType
+.Tag <: Never
+.Tag.tag: Never
+.Tag.rank: Never
+.Tag.created_at: Never
+.Tag.updated_at: Never
+.Tag.__str__: (self: writeup.Tag) -> Never
+
+.Series: ClassType
+.Series <: Never
+.Series.name: Never
+.Series.created_at: Never
+.Series.updated_at: Never
+.Series.author: Never
+
+.WriteUp: ClassType
+.WriteUp <: Never
+.WriteUp.title: Never
+.WriteUp.description: Never
+.WriteUp.content: Never
+.WriteUp.thumbnail: Never
+.WriteUp.tags: Never
+.WriteUp.author: Never
+.WriteUp.created_at: Never
+.WriteUp.updated_at: Never
+.WriteUp.edited: Never
+.WriteUp.series: Never
+.WriteUp.__str__: (self: writeup.WriteUp) -> Str
+
+.WriteUpImpression: ClassType
+.WriteUpImpression <: Never
+.WriteUpImpression.writeup: Never
+.WriteUpImpression.impression: Never
+.WriteUpImpression.account: Never
+.WriteUpImpression.hash: Never
+.WriteUpImpression.created_at: Never
+.WriteUpImpression.updated_at: Never
+.WriteUpImpression.__str__: (self: writeup.WriteUpImpression) -> Str
+
+.ForYou: ClassType
+.ForYou <: Never
+.ForYou.series: Never
+.ForYou.authors: Never
+.ForYou.tags: Never
+.ForYou.account: Never
+.ForYou.created_at: Never
+.ForYou.updated_at: Never
+.ForYou.__str__: (self: writeup.ForYou) -> Never
+
+.Comment: ClassType
+.Comment <: Never
+.Comment.writeup: Never
+.Comment.author: Never
+.Comment.comment: Never
+.Comment.created_at: Never
+.Comment.parent: Never
+.Comment.rank: Never
+.Comment.__str__: (self: writeup.Comment) -> Never
+
+.CommentImpression: ClassType
+.CommentImpression <: Never
+.CommentImpression.comment: Never
+.CommentImpression.impression: Never
+.CommentImpression.account: Never
+.CommentImpression.hash: Never
+.CommentImpression.created_at: Never
+.CommentImpression.updated_at: Never
+.CommentImpression.__str__: (self: writeup.CommentImpression) -> Str
+

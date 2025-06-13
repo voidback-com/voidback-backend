@@ -1,0 +1,21 @@
+##[pylyzer] failed /users/mohamed/desktop/projects/orgs/voidback/voidback/voidback-backend/voidbackapi/models/reportmanagement.py 1749367842 1180
+.models = pyimport "models"
+
+.___v_desugar_1 = pyimport "account"
+.account = pyimport "account"
+.Account: Never
+.Report: ClassType
+.Report <: Never
+.Report.object_type: Never
+.Report.object_id: Never
+.Report.object_uuid: Never
+.Report.description: Never
+.Report.reporter: Never
+.Report.priority: Never
+.Report.disturbance: Never
+.Report.created_at: Never
+.Report.resolved: Never
+.Report.resolved_at: Never
+.Report.resolved_by: Never
+.Report.__str__: (self: reportmanagement.Report) -> Never
+

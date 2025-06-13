@@ -1,0 +1,19 @@
+##[pylyzer] failed /users/mohamed/desktop/projects/orgs/voidback/voidback/voidback-backend/voidbackapi/models/notifications.py 1749459203 687
+.models = pyimport "__init__"
+.__init__ = pyimport "__init__"
+
+.___v_desugar_1 = pyimport "transaction"
+.transaction = pyimport "transaction"
+.on_commit: (func: Obj, using: Obj := Obj, robust: Obj := Obj) -> NoneType
+.___v_desugar_2 = pyimport "account"
+.account = pyimport "account"
+.Account: Never
+.Notification: ClassType
+base = pyimport "base"
+.Notification <: base.Model
+.Notification.isRead: Never
+.Notification.account: Never
+.Notification.content: Never
+.Notification.created_at: Never
+.Notification.updated_at: Never
+

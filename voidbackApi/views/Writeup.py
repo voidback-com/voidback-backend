@@ -15,13 +15,9 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 
 
-
-
 # create and delete writeup
 class WriteUpView(APIView):
     permission_classes = [IsAuthenticated]
-
-
 
     def post(self, request: Request):
         try:
@@ -30,10 +26,15 @@ class WriteUpView(APIView):
 
             data['author'] = request.user
 
-            
             if data['series']:
-                data['series'] = Series.objects.all().filter(pk=data['series']).first()
+                data['series'] = Series.objects.all().filter(
+                    name=data['series']).first()
 
+                series_w_count = WriteUp.objects.all().filter(
+                    series=data['series'].id).count()
+
+                if series_w_count == 100:
+                    return Response(data={"error": f"{data['series'].name} is at its max of ({series_w_count}) write ups."}, status=400)
 
             data['thumbnail'] = request.FILES.get("thumbnail", None)
 
@@ -52,15 +53,13 @@ class WriteUpView(APIView):
                 return Response(data=serializer.errors, status=400)
 
         except Exception:
-            return Response(data={"error": "Failed to validate write up, please try again!"},status=400)
-
-
+            return Response(data={"error": "Failed to validate write up, please try again!"}, status=400)
 
     def delete(self, request: Request):
         try:
-            instance = WriteUp.objects.all().filter(pk=request.data.get('id')).first() 
+            instance = WriteUp.objects.all().filter(pk=request.data.get('id')).first()
 
-            if instance and instance.author.username==request.user.username:
+            if instance and instance.author.username == request.user.username:
                 instance.thumbnail.thumbnail.delete(save=False)
                 instance.delete()
 
@@ -70,29 +69,11 @@ class WriteUpView(APIView):
             return Response(data={"error": "Failed to delete post, please try again!"}, status=400)
 
 
-
-
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def getMySeries(request: Request):
-    try:
-        series = Series.objects.all().filter(author=request.user).order_by("-created_at")
-        s = SeriesSerializer(series, many=True)
-        return Response(data=s.data, status=200)
-    except Exception:
-        return Response(data={"error": "Failed to fetch your series!"}, status=400)
-
-
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def newSeries(request: Request):
     try:
         data = request.data
-
 
         data['author'] = request.user
 
@@ -111,7 +92,6 @@ def newSeries(request: Request):
         return Response(data={"error": "Failed to validate new series!"}, status=400)
 
 
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def deleteSeries(request: Request):
@@ -119,8 +99,8 @@ def deleteSeries(request: Request):
         sid = request.data.get("id")
 
         s = Series.objects.all().filter(pk=sid).first()
-        
-        if s and s.author==request.user:
+
+        if s and s.author == request.user:
             s.delete()
 
         return Response(status=200)
@@ -128,46 +108,41 @@ def deleteSeries(request: Request):
         return Response(status=400)
 
 
-
-
-
-class TagsListView(ListAPIView):     
-    queryset = Tag.objects.all().order_by("-rank", "-updated_at")     
-    serializer_class = TagSerializer     
-    permission_classes = [AllowAny]     
+class TagsListView(ListAPIView):
+    queryset = Tag.objects.all().order_by("-rank", "-updated_at")
+    serializer_class = TagSerializer
+    permission_classes = [AllowAny]
     pagination_class = DefaultSetPagination
-
 
     # check if the user is authenticated and return tags based on foryou instance of the user -> (if none or unauthenticated) return trending tags
     # def get_queryset(self):
     #     try:
-    #         pass 
+    #         pass
     #
 
 
-
-
-class WriteUpListView(ListAPIView):     
-    queryset = WriteUp.objects.all().order_by("-created_at", '-updated_at')     
-    serializer_class = WriteUpSerializer     
-    permission_classes = [AllowAny]     
+class WriteUpListView(ListAPIView):
+    queryset = WriteUp.objects.all().order_by("-created_at", '-updated_at')
+    serializer_class = WriteUpSerializer
+    permission_classes = [AllowAny]
     pagination_class = DefaultSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ["title", "content", "description", 'tags__tag', 'author__username', "series__name", "author__full_name"]
-
+    search_fields = ["title", "content", "description", 'tags__tag',
+                     'author__username', "series__name", "author__full_name"]
 
     # return's personalized write ups if the user is authenticated else: the most recent trending write ups
+
     def get_queryset(self):
         try:
 
             series = self.request.query_params.get("series", None)
 
             if series:
-                queryset = WriteUp.objects.all().filter(series__name=series).order_by("-created_at")
+                queryset = WriteUp.objects.all().filter(
+                    series__name=series).order_by("-created_at")
                 return queryset
 
-
-            queryset = WriteUp.objects.all().order_by("-created_at", '-updated_at')     
+            queryset = WriteUp.objects.all().order_by("-created_at", '-updated_at')
 
             if self.request.user.is_authenticated:
                 fy = ForYou.objects.all().filter(account=self.request.user).first()
@@ -189,13 +164,11 @@ class WriteUpListView(ListAPIView):
             return []
 
 
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def getWriteUp(request: Request):
     try:
         wid = request.query_params.get("id", None)
-
 
         inst = WriteUp.objects.all().filter(pk=wid).first()
 
@@ -204,11 +177,12 @@ def getWriteUp(request: Request):
         else:
             # create neutral impression if none exist
             if request.user.is_authenticated:
-                imp = WriteUpImpression.objects.all().filter(writeup=inst, account=request.user).first()
+                imp = WriteUpImpression.objects.all().filter(
+                    writeup=inst, account=request.user).first()
                 if not imp:
-                    imp = WriteUpImpression(account=request.user, impression=0, writeup=inst, hash=f"{request.user.id}:{inst.id}")
+                    imp = WriteUpImpression(account=request.user, impression=0, writeup=inst, hash=f"{
+                                            request.user.id}:{inst.id}")
                     imp.save()
-
 
         s = WriteUpSerializer(inst)
 
@@ -218,24 +192,23 @@ def getWriteUp(request: Request):
         return Response(data={"error": "Failed to fetch write up!"}, status=400)
 
 
-
-
 @api_view(["GET"])
 @permission_classes([AllowAny])
 # return impressions and account impression of the write up
 def getImpressions(request: Request):
     try:
-        wid = request.query_params.get("writeup") # writeup id
+        wid = request.query_params.get("writeup")  # writeup id
 
         writeupImp = None
 
         if request.user.is_authenticated:
-            writeupImp = WriteUpImpression.objects.all().filter(writeup=wid, account=request.user).first()
+            writeupImp = WriteUpImpression.objects.all().filter(
+                writeup=wid, account=request.user).first()
             if writeupImp:
                 writeupImp = writeupImp.impression
 
-
-        writeUpLikes = WriteUpImpression.objects.all().filter(writeup=wid, impression=1).count()
+        writeUpLikes = WriteUpImpression.objects.all().filter(
+            writeup=wid, impression=1).count()
 
         writeUpViews = WriteUpImpression.objects.all().filter(writeup=wid).count()
 
@@ -245,20 +218,19 @@ def getImpressions(request: Request):
         return Response(data={"error": "Failed to fetch write up impressions!"}, status=400)
 
 
-
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def likeWriteUp(request: Request):
     try:
-        wid = request.query_params.get("writeup") # writeup id
+        wid = request.query_params.get("writeup")  # writeup id
 
-        writeupImp = WriteUpImpression.objects.all().filter(writeup=wid, account=request.user).first()
+        writeupImp = WriteUpImpression.objects.all().filter(
+            writeup=wid, account=request.user).first()
 
         if not writeupImp:
             w = WriteUp.objects.all().filter(pk=wid).first()
-            writeupImp = WriteUpImpression.objects.create(writeup=w, account=request.user, impression=0, hash=f"{request.user.username}:{wid}")
-
+            writeupImp = WriteUpImpression.objects.create(
+                writeup=w, account=request.user, impression=0, hash=f"{request.user.username}:{wid}")
 
         if writeupImp.impression == 0:
             writeupImp.impression = 1
@@ -268,7 +240,6 @@ def likeWriteUp(request: Request):
             writeupImp.impression = 0
             writeupImp.save()
 
-
         fy = ForYou.objects.all().filter(account=request.user).first()
 
         if not fy:
@@ -276,37 +247,29 @@ def likeWriteUp(request: Request):
 
             fy.save()
 
-
-
         inst = WriteUp.objects.all().filter(pk=wid).first()
 
         ser_inst = WriteUpSerializer(inst).data
-
 
         if ser_inst['tags']:
             for t in ser_inst['tags']:
                 if t['tag'] not in fy.tags:
                     fy.tags.append(t['tag'])
 
-
         if ser_inst['series']:
             if ser_inst['series']['name'] not in fy.series:
                 fy.series.append(ser_inst['series']['name'])
 
-
         if ser_inst['author']['username'] not in fy.authors:
             fy.authors.append(ser_inst['author']['username'])
 
-
         fy.save()
-
 
         likes = WriteUpImpression.objects.all().filter(writeup=wid, impression=1).count()
 
         views = WriteUpImpression.objects.all().filter(writeup=wid).count()
 
-
-        if inst.author!=request.user and writeupImp.impression==1:
+        if inst.author != request.user and writeupImp.impression == 1:
 
             create_notification(inst.author, {
                 "from": PublicAccountSerializer(request.user).data,
@@ -317,23 +280,15 @@ def likeWriteUp(request: Request):
                 "link": f"/view/writeup/{wid}"
             })
 
-
-
         return Response(data={"impression": writeupImp.impression, "likes": likes, "views": views}, status=200)
 
     except Exception:
         return Response(data={"error": "Failed to make an impression!"}, status=400)
 
 
-
-
-
-
 # create and delete comment
 class CommentView(APIView):
     permission_classes = [IsAuthenticated]
-
-
 
     def post(self, request: Request):
         try:
@@ -341,22 +296,20 @@ class CommentView(APIView):
             data = request.data
 
             if data['parent']:
-                c = Comment.objects.all().filter(pk=int(data['parent'])).first()
+                c = Comment.objects.all().filter(
+                    pk=int(data['parent'])).first()
                 data['parent'] = c
 
-                c.rank+=1 # increment rank of comment
+                c.rank += 1  # increment rank of comment
                 c.save()
-
 
             data['author'] = request.user
 
             serializer = CommentSerializer(data=data)
 
-
             if serializer.is_valid():
 
                 r = serializer.create(data)
-
 
                 if r.parent and r.parent.author != request.user:
                     create_notification(r.parent.author, {
@@ -368,7 +321,6 @@ class CommentView(APIView):
                         "link": f"/view/writeup/{r.writeup.id}"
                     })
 
-
                 elif r.writeup.author != request.user:
                     create_notification(r.writeup.author, {
                         "from": PublicAccountSerializer(request.user).data,
@@ -379,22 +331,19 @@ class CommentView(APIView):
                         "link": f"/view/writeup/{r.writeup.id}"
                     })
 
-
                 return Response(data=CommentSerializer(r).data, status=200)
 
             else:
                 return Response(data=serializer.errors, status=400)
 
         except Exception:
-            return Response(data={"error": "Failed to validate comment, please try again!"},status=400)
-
-
+            return Response(data={"error": "Failed to validate comment, please try again!"}, status=400)
 
     def delete(self, request: Request):
         try:
-            instance = Comment.objects.all().filter(pk=request.data.get('id')).first() 
+            instance = Comment.objects.all().filter(pk=request.data.get('id')).first()
 
-            if instance and instance.author.username==request.user.username:
+            if instance and instance.author.username == request.user.username:
                 instance.delete()
 
             return Response(status=200)
@@ -403,18 +352,13 @@ class CommentView(APIView):
             return Response(data={"error": "Failed to delete comment, please try again!"}, status=400)
 
 
-
-
-
-class CommentListView(ListAPIView):     
-    queryset = Comment.objects.all().order_by("-created_at")     
-    serializer_class = CommentSerializer     
-    permission_classes = [AllowAny]     
+class CommentListView(ListAPIView):
+    queryset = Comment.objects.all().order_by("-created_at")
+    serializer_class = CommentSerializer
+    permission_classes = [AllowAny]
     pagination_class = DefaultSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['comment', 'author__username', "author__full_name"]
-
-
 
     def get_queryset(self):
         try:
@@ -422,30 +366,29 @@ class CommentListView(ListAPIView):
             sortby = self.request.query_params.get("sortby", "top")
             # sortby: my, latest, top
 
-                # my: my comments first
-                # new: newest comments first
-                # top: most replied to comments first
+            # my: my comments first
+            # new: newest comments first
+            # top: most replied to comments first
 
-            if sortby=="latest":
-                queryset_latest = Comment.objects.all().filter(writeup=self.request.query_params.get("writeup"), parent=self.request.query_params.get("parent", None)).order_by("-created_at")     
+            if sortby == "latest":
+                queryset_latest = Comment.objects.all().filter(writeup=self.request.query_params.get(
+                    "writeup"), parent=self.request.query_params.get("parent", None)).order_by("-created_at")
 
                 return queryset_latest
 
-
-            elif sortby=="my":
-                queryset_my = Comment.objects.all().filter(writeup=self.request.query_params.get("writeup"), parent=self.request.query_params.get("parent", None), author=self.request.user).order_by("-created_at")     
+            elif sortby == "my":
+                queryset_my = Comment.objects.all().filter(writeup=self.request.query_params.get("writeup"),
+                                                           parent=self.request.query_params.get("parent", None), author=self.request.user).order_by("-created_at")
 
                 return queryset_my
 
-
             else:
-                queryset_top = Comment.objects.all().filter(writeup=self.request.query_params.get("writeup"), parent=self.request.query_params.get("parent", None)).order_by("-rank", "-created_at")     
+                queryset_top = Comment.objects.all().filter(writeup=self.request.query_params.get("writeup"),
+                                                            parent=self.request.query_params.get("parent", None)).order_by("-rank", "-created_at")
 
                 return queryset_top
         except Exception:
             return []
-
-
 
 
 @api_view(['GET'])
@@ -455,8 +398,7 @@ def commentsCount(request: Request):
         wid = request.query_params.get("writeup", None)
         parent = request.query_params.get("parent", None)
 
-        
-        qcount = Comment.objects.all().filter(writeup=wid, parent=parent).count() 
+        qcount = Comment.objects.all().filter(writeup=wid, parent=parent).count()
 
         return Response(data={"count": qcount}, status=200)
 
@@ -464,16 +406,14 @@ def commentsCount(request: Request):
         return Response(data={"error": "Failed to fetch comments count, please try again!"}, status=400)
 
 
-
-
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def likeComment(request: Request):
     try:
-        cid = request.query_params.get("comment") # comment id
+        cid = request.query_params.get("comment")  # comment id
 
-        commentImp = CommentImpression.objects.all().filter(comment=cid, account=request.user).first()
+        commentImp = CommentImpression.objects.all().filter(
+            comment=cid, account=request.user).first()
 
         if commentImp:
             if commentImp.impression == 0:
@@ -490,7 +430,8 @@ def likeComment(request: Request):
 
         else:
 
-            data = {"account": request.user, "comment": cid, "impression": 1, "hash": f"{request.user.id}:{cid}"}
+            data = {"account": request.user, "comment": cid,
+                    "impression": 1, "hash": f"{request.user.id}:{cid}"}
             ser = CommentImpressionSerializer(data=data)
 
             if ser.is_valid():
@@ -500,13 +441,10 @@ def likeComment(request: Request):
 
                 return Response(data={"impression": ser.impression, "likes": likes}, status=200)
 
-
             return Response(data=ser.errors, status=400)
 
     except Exception:
         return Response(data={"error": "Failed to make an impression!"}, status=400)
-
-
 
 
 @api_view(["GET"])
@@ -514,17 +452,18 @@ def likeComment(request: Request):
 # return comment impressions and account impression
 def getCommentImpressions(request: Request):
     try:
-        cid = request.query_params.get("comment") # comment id
+        cid = request.query_params.get("comment")  # comment id
 
         commentImp = None
 
         if request.user.is_authenticated:
-            commentImp = CommentImpression.objects.all().filter(comment=cid, account=request.user).first()
+            commentImp = CommentImpression.objects.all().filter(
+                comment=cid, account=request.user).first()
             if commentImp:
                 commentImp = commentImp.impression
 
-
-        commentLikes = CommentImpression.objects.all().filter(comment=cid, impression=1).count()
+        commentLikes = CommentImpression.objects.all().filter(
+            comment=cid, impression=1).count()
 
         return Response(data={"likes": commentLikes, "impression": commentImp}, status=200)
 
@@ -532,33 +471,28 @@ def getCommentImpressions(request: Request):
         return Response(data={"error": "Failed to fetch comment impressions!"}, status=400)
 
 
-
-
-
-
 # returns write ups & series by this author
-class AccountWriteUpListView(ListAPIView):     
+class AccountWriteUpListView(ListAPIView):
     queryset = []
-    serializer_class = WriteUpSerializer     
-    permission_classes = [AllowAny]     
+    serializer_class = WriteUpSerializer
+    permission_classes = [AllowAny]
     pagination_class = DefaultSetPagination
-
 
     def get_queryset(self):
         try:
-            series = self.request.query_params.get("series") # series name
-            author = self.request.query_params.get("author") # author's username
-
+            series = self.request.query_params.get("series")  # series name
+            author = self.request.query_params.get(
+                "author")  # author's username
 
             if series and author:
-                queryset = WriteUp.objects.all().filter(author__username=author, series__name=series).order_by("-created_at", "-updated_at")
+                queryset = WriteUp.objects.all().filter(author__username=author,
+                                                        series__name=series).order_by("-created_at", "-updated_at")
                 return queryset
-
 
             if not series and author:
-                queryset = WriteUp.objects.all().filter(author__username=author).order_by("-created_at", "-updated_at")
+                queryset = WriteUp.objects.all().filter(
+                    author__username=author).order_by("-created_at", "-updated_at")
                 return queryset
-
 
             return []
 
@@ -566,47 +500,42 @@ class AccountWriteUpListView(ListAPIView):
             return []
 
 
-
-
-class SeriesListView(ListAPIView):     
+class SeriesListView(ListAPIView):
     queryset = []
-    serializer_class = SeriesSerializer     
-    permission_classes = [AllowAny]     
-    pagination_class = DefaultSetPagination
+    serializer_class = SeriesSerializer
+    permission_classes = [AllowAny]
 
-
-    # return's personalized write ups if the user is authenticated else: the most recent trending write ups
     def get_queryset(self):
         try:
-            author = self.request.query_params.get("author") # author's username
+            author = self.request.query_params.get(
+                "author")  # author's username
 
             if author:
-                queryset = Series.objects.all().filter(author__username=author).order_by("-created_at", "-updated_at")
+                queryset = Series.objects.all().filter(
+                    author__username=author).order_by("-created_at", "-updated_at")
                 return queryset
 
             return []
         except Exception:
             return []
-
-
 
 
 # returns write ups liked by the given username
-class LikedWriteUpListView(ListAPIView):     
+class LikedWriteUpListView(ListAPIView):
     queryset = []
-    serializer_class = WriteUpSerializer     
-    permission_classes = [AllowAny]     
+    serializer_class = WriteUpSerializer
+    permission_classes = [AllowAny]
     pagination_class = DefaultSetPagination
-
 
     def get_queryset(self):
         try:
-            account = self.request.query_params.get("account", None) # account username
-
+            account = self.request.query_params.get(
+                "account", None)  # account username
 
             if account:
                 queryset = WriteUp.objects.all().filter(
-                    pk__in=WriteUpImpression.objects.all().filter(account__username=account, impression=1).order_by("-created_at").values("writeup")
+                    pk__in=WriteUpImpression.objects.all().filter(account__username=account,
+                                                                  impression=1).order_by("-created_at").values("writeup")
                 )
 
                 return queryset
@@ -615,10 +544,3 @@ class LikedWriteUpListView(ListAPIView):
 
         except Exception:
             return []
-
-
-
-
-
-
-

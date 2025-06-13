@@ -1,0 +1,51 @@
+##[pylyzer] failed /users/mohamed/desktop/projects/orgs/voidback/voidback/voidback-backend/voidbackapi/models/account.py 1749367842 2114
+.models = pyimport "models"
+
+.___v_desugar_1 = pyimport "models"
+
+.AbstractUser: {models.AbstractUser}
+.uuid: Never
+
+.pathlib: Never
+
+.___v_desugar_2 = pyimport "__init__"
+.__init__ = pyimport "__init__"
+.ResizedImageField: {django_resized.forms.ResizedImageField}
+.___v_desugar_3 = pyimport "crypto"
+.crypto = pyimport "crypto"
+.secrets: Never
+.generateOTP: () -> Never
+.Account: ClassType
+.Account <: models.AbstractUser
+.Account.id: Never
+.Account.email: Never
+.Account.username: Never
+.Account.full_name: Never
+.Account.avatar: Never
+.Account.bio: Never
+.Account.site_link: Never
+.Account.created_at: Never
+.Account.updated_at: Never
+.Account.isVerified: Never
+.Account.rank: Never
+.Account.USERNAME_FIELD: {"email"}
+.Account.REQUIRED_FIELDS: Never
+.Account.__str__: (self: Account.Account) -> Never
+
+.OneTimePassword: ClassType
+.OneTimePassword <: Never
+.OneTimePassword.otp: Never
+.OneTimePassword.created_at: Never
+.OneTimePassword.expires_at: Never
+.OneTimePassword.verified: Never
+.OneTimePassword.account: Never
+.OneTimePassword.__str__: (self: Account.OneTimePassword) -> Never
+
+.Follow: ClassType
+.Follow <: Never
+.Follow.follower: Never
+.Follow.following: Never
+.Follow.created_at: Never
+.Follow.hash: Never
+.Follow.__str__: (self: Account.Follow) -> Never
+

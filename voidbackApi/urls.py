@@ -28,7 +28,6 @@ from .views import (
 
     # WRITEUP
     WriteUpView,
-    getMySeries,
     newSeries,
     TagsListView,
     WriteUpListView,
@@ -69,9 +68,6 @@ from .views import (
 )
 
 
-
-
-
 urlpatterns = [
 
     # AUTHENTICATION
@@ -81,26 +77,33 @@ urlpatterns = [
 
 
     # ACCOUNT
-    path("account", AccountView.as_view()), # get account object of current access token
-    path("account/sendOtp", send_otp), # send an email otp
-    path("account/verifyOtp", verify_otp), # verify email otp
-    path("account/reset", resetPassword), # reset password
+    # get account object of current access token
+    path("account", AccountView.as_view()),
+    path("account/sendOtp", send_otp),  # send an email otp
+    path("account/verifyOtp", verify_otp),  # verify email otp
+    path("account/reset", resetPassword),  # reset password
     path("account/recommendations", getAccountRecommendations),
     path("account/anonymous_sendOtp", send_AnonymousOtp),
 
-    path("account/list", AccountListView.as_view()), # list all accounts
+    path("account/list", AccountListView.as_view()),  # list all accounts
 
-    path("account/search", searchAccounts), # search for an account (used by autocomplete)
-    path("account/following/<str:username>", getUsernameFollowing), # get all the accounts this username follows,
-    path("account/followingUsername/count/<str:username>", getFollowingUsernameCount), # get count of all the accounts that follow this username
-    path("account/usernameFollows/count/<str:username>", getUsernameFollowsCount), # get count of all the accounts that follow this username
+    # search for an account (used by autocomplete)
+    path("account/search", searchAccounts),
+    # get all the accounts this username follows,
+    path("account/following/<str:username>", getUsernameFollowing),
+    # get count of all the accounts that follow this username
+    path("account/followingUsername/count/<str:username>",
+         getFollowingUsernameCount),
+    # get count of all the accounts that follow this username
+    path("account/usernameFollows/count/<str:username>", getUsernameFollowsCount),
 
-    path("account/followers/<str:username>", getUsernameFollowers), # get all the accounts that follow this username
+    # get all the accounts that follow this username
+    path("account/followers/<str:username>", getUsernameFollowers),
 
-    path("account/isFollowed", isAccountFollowed), # is account followed
-    path("account/follow", followAccount), # follow an account
-    path("account/unfollow", unfollowAccount), # unfollow an account
-    path("account/isFollowingBack", isFollowingBack), # is account following me
+    path("account/isFollowed", isAccountFollowed),  # is account followed
+    path("account/follow", followAccount),  # follow an account
+    path("account/unfollow", unfollowAccount),  # unfollow an account
+    path("account/isFollowingBack", isFollowingBack),  # is account following me
     path("account/getAccount/<str:username>", getAccountByUsername),
     path("account/getMutuals/<str:username>", getAccountMutuals),
     path("account/friends/<str:username>", getFriends),
@@ -110,7 +113,7 @@ urlpatterns = [
 
 
     # WRITEUPs
-    path("writeup", WriteUpView.as_view()), # create, delete or view writeup
+    path("writeup", WriteUpView.as_view()),  # create, delete or view writeup
     path("writeup/list", WriteUpListView.as_view()),
     path("getWriteUp", getWriteUp),
     path("writeup/impressions", getImpressions),
@@ -124,15 +127,14 @@ urlpatterns = [
     path("writeup/series/delete", deleteSeries),
 
 
-    # WriteUp Tags
-    path("getSeries", getMySeries), 
-    path("newSeries", newSeries), 
+    # WriteUp Tags & newSeries
+    path("newSeries", newSeries),
     path('tags', TagsListView.as_view()),
 
 
 
     # SEARCH QUERY
-    path("searchQuery", SearchQueryView.as_view()), # search query
+    path("searchQuery", SearchQueryView.as_view()),  # search query
 
 
 
@@ -152,5 +154,3 @@ urlpatterns = [
 
 
 ]
-
-

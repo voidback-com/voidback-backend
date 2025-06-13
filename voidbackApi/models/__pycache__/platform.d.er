@@ -1,0 +1,23 @@
+##[pylyzer] failed /users/mohamed/desktop/projects/orgs/voidback/voidback/voidback-backend/voidbackapi/models/platform.py 1749367842 1215
+.models = pyimport "models"
+
+.___v_desugar_1 = pyimport "account"
+.account = pyimport "account"
+.Account: Never
+.PlatformMessage: ClassType
+.PlatformMessage <: Never
+.PlatformMessage.image: Never
+.PlatformMessage.title: Never
+.PlatformMessage.description: Never
+.PlatformMessage.created_at: Never
+.PlatformMessage.links: Never
+.PlatformMessage.author: Never
+.PlatformMessage.__str__: (self: platform.PlatformMessage) -> Never
+
+.PlatformMessageImpression: ClassType
+.PlatformMessageImpression <: Never
+.PlatformMessageImpression.message: Never
+.PlatformMessageImpression.account: Never
+.PlatformMessageImpression.created_at: Never
+.PlatformMessageImpression.__str__: (self: platform.PlatformMessageImpression) -> Str
+

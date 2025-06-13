@@ -1,0 +1,20 @@
+##[pylyzer] failed /users/mohamed/desktop/projects/orgs/voidback/voidback/voidback-backend/voidbackapi/models/search.py 1749367842 462
+.___v_desugar_1: Never
+.timezone: Never
+.models = pyimport "models"
+
+.uuid: Never
+.pathlib: Never
+
+.___v_desugar_2 = pyimport "account"
+.account = pyimport "account"
+.Account: Never
+.SearchQuery: ClassType
+.SearchQuery <: Never
+.SearchQuery.query: Never
+.SearchQuery.rank: Never
+.SearchQuery.object_name: Never
+.SearchQuery.created_at: Never
+.SearchQuery.updated_at: Never
+.SearchQuery.__str__: (self: search.SearchQuery) -> Never
+
