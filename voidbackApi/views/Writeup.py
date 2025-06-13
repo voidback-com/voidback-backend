@@ -100,10 +100,16 @@ def deleteSeries(request: Request):
 
         s = Series.objects.all().filter(pk=sid).first()
 
-        if s and s.author == request.user:
+        if s and s.author.username == request.user.username:
             s.delete()
 
-        return Response(status=200)
+            return Response(status=200)
+
+        elif not s:
+            return Response(status=200)
+
+        else:
+            return Response(data={"error": "you are not the author of this series!"}, status=400)
     except Exception:
         return Response(status=400)
 
@@ -137,7 +143,14 @@ class WriteUpListView(ListAPIView):
 
             series = self.request.query_params.get("series", None)
 
-            if series:
+            tag = self.request.query_params.get("tag", None)
+
+            if tag:
+                queryset = WriteUp.objects.all().filter(
+                    tags__tag=tag).order_by("-created_at")
+                return queryset
+
+            elif series:
                 queryset = WriteUp.objects.all().filter(
                     series__name=series).order_by("-created_at")
                 return queryset
