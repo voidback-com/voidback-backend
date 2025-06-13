@@ -193,8 +193,8 @@ def getWriteUp(request: Request):
                 imp = WriteUpImpression.objects.all().filter(
                     writeup=inst, account=request.user).first()
                 if not imp:
-                    imp = WriteUpImpression(account=request.user, impression=0, writeup=inst, hash=f"{
-                                            request.user.id}:{inst.id}")
+
+                    imp = WriteUpImpression(account=request.user, impression=0, writeup=inst, hash=f"{request.user.id}:{inst.id}")
                     imp.save()
 
         s = WriteUpSerializer(inst)
