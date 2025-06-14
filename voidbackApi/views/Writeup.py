@@ -19,6 +19,75 @@ from django_filters.rest_framework import DjangoFilterBackend
 class WriteUpView(APIView):
     permission_classes = [IsAuthenticated]
 
+
+    def patch(self, request: Request):
+        try:
+            data = json.loads(request.data.get("writeUp", None))
+
+            instance = WriteUp.objects.all().filter(pk=data['id']).first()
+
+            data['author'] = request.user
+
+            tags = data['tags']
+
+            _tags = []
+
+            for t in tags:
+                if "id" not in t:
+                    s = Tag.objects.all().filter(tag=t['tag']).first()
+                    if s:
+                        _tags.append(s.id)
+                    else:
+                        n = Tag(tag=t['tag'])
+                        n.save()
+                        _tags.append(n.id)
+
+
+                else:
+                    _tags.append(t['id'])
+
+
+            data['tags'] = _tags
+
+
+            if data['series']:
+                data['series'] = Series.objects.all().filter(name=data['series']).first()
+
+                series_w_count = WriteUp.objects.all().filter(
+                    series=data['series'].id).count()
+
+                if series_w_count == 100:
+                    return Response(data={"error": f"{data['series'].name} is at its max of ({series_w_count}) write ups."}, status=400)
+
+
+
+            if len(request.FILES):
+                data['thumbnail'] = request.FILES.get("thumbnail", None)
+
+                if 'thumbnail' in data:
+
+                    thumbnail = WriteUpThumbnail(thumbnail=data['thumbnail'])
+
+                    thumbnail.save()
+
+                    data['thumbnail'] = thumbnail
+
+
+            serializer = WriteUpSerializer(instance, data=data)
+
+            if serializer.is_valid():
+                r = serializer.update(instance, data)
+                return Response(data=WriteUpSerializer(r).data, status=200)
+
+            else:
+                return Response(data=serializer.errors, status=400)
+
+
+        except Exception:
+            return Response(data={"error": "Failed to validate write up, please try again!"}, status=400)
+
+
+
     def post(self, request: Request):
         try:
 
@@ -55,6 +124,7 @@ class WriteUpView(APIView):
         except Exception:
             return Response(data={"error": "Failed to validate write up, please try again!"}, status=400)
 
+
     def delete(self, request: Request):
         try:
             instance = WriteUp.objects.all().filter(pk=request.data.get('id')).first()
@@ -67,6 +137,7 @@ class WriteUpView(APIView):
 
         except Exception:
             return Response(data={"error": "Failed to delete post, please try again!"}, status=400)
+
 
 
 @api_view(['POST'])
