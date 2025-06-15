@@ -194,15 +194,19 @@ STATIC_URL = "/static/"
 
 
 
-CORS_ALLOWED_ORIGINS = [
-    "https://voidback.com",
-    "http://voidback.com",
-    "http://www.voidback.com",
-    "https://www.voidback.com",
-    # "http://127.0.0.1:3000",
-    # "http://127.0.0.1:8000",
-    # "http://192.168.0.108:8000",
-]
+CORS_ALLOWED_ORIGINS = env_config("CORS_ALLOWED_ORIGINS", cast=str).split(" ") 
+
+if not CORS_ALLOWED_ORIGINS.__len__():
+    CORS_ALLOWED_ORIGINS = [
+        "https://voidback.com",
+        "http://voidback.com",
+        "http://www.voidback.com",
+        "https://www.voidback.com",
+        # "http://127.0.0.1:3000",
+        # "http://127.0.0.1:8000",
+        # "http://192.168.0.108:8000",
+    ]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
 
