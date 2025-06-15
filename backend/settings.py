@@ -99,8 +99,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-        'django_user_agents.middleware.UserAgentMiddleware',
-
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -209,6 +208,7 @@ if not CORS_ALLOWED_ORIGINS.__len__():
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
+CORS_ALLOW_ALL_ORIGINS = False
 
 
 AUTH_USER_MODEL = "voidbackApi.Account"
