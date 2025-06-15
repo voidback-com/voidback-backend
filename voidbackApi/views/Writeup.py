@@ -18,6 +18,20 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 # create and delete writeup
 class WriteUpView(APIView):
+    """
+    # The /writeup endpoint
+    
+    > Create, Update and Delete Write Ups
+    
+
+    - create writeUps with a post request containing a **formData:**
+        **writeUp**: The json object
+
+        **thumbnail**: Optional thumbnail image file
+
+
+
+    """
     permission_classes = [IsAuthenticated]
 
 

@@ -131,3 +131,9 @@ networks:
 > lastly: spin up the docker compose and add the appropriate urls to the .env file of the django backend, and run it.
 
 
+- YOU CAN NAVIGATE TO: **/api/schema/redoc** for the API docs
+
+
+- More documentation can be found at **voidback.com**
+
+

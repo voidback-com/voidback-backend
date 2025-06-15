@@ -20,15 +20,11 @@ import dj_database_url
 
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env_config("SECRET_KEY", cast=str, default="")
@@ -39,8 +35,6 @@ DEBUG = env_config("DEBUG", cast=bool, default=False)
 
 
 
-
-# Application definition
 
 INSTALLED_APPS = [
     "unfold",
@@ -57,7 +51,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "voidbackApi",
     "django_user_agents",
-
+    "drf_spectacular"
 
 ]
 
@@ -72,7 +66,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         "rest_framework.authentication.TokenAuthentication",
     ),
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
 
 
 
@@ -226,4 +225,16 @@ UNFOLD = unfold.UNFOLD
 # make sure it returns https urls only
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True 
+
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'VOIDBACK API',
+    'DESCRIPTION': 'Voidback Api Docs',
+    'VERSION': '1.0.0',
+    'SERVERS': [
+        {'url': 'https://api.voidback.com/api', 'description': 'VOIDBACK Production API'},
+    ],
+}
+
 

@@ -25,3 +25,4 @@ channels_redis
 channels
 django-s3-storage
 psycopg[binary,pool]
+drf-spectacular
