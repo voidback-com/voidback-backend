@@ -194,7 +194,15 @@ STATIC_URL = "/static/"
 
 
 
-CORS_ALLOWED_ORIGINS = env_config("ALLOWED_ORIGINS", cast=str, default=" ").split()
+CORS_ALLOWED_ORIGINS = [
+    "https://voidback.com",
+    "http://voidback.com",
+    "http://www.voidback.com",
+    "https://www.voidback.com",
+    # "http://127.0.0.1:3000",
+    # "http://127.0.0.1:8000",
+    # "http://192.168.0.108:8000",
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
 
@@ -221,6 +229,7 @@ UNFOLD = unfold.UNFOLD
 
 
 
-# make sure it returns https in rest requests
+# make sure it returns https urls only
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True 
+

@@ -15,6 +15,7 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 
 
+
 # create and delete writeup
 class WriteUpView(APIView):
     permission_classes = [IsAuthenticated]
